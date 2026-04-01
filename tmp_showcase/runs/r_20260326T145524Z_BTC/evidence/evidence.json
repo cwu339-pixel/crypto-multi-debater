@@ -1,0 +1,8 @@
+{
+  "evidence_status": "fetched",
+  "source": "open_deep_research_local",
+  "citations_count": 0,
+  "run_mode": "live_or_current",
+  "historical_replay": false,
+  "point_in_time_limitations": []
+}

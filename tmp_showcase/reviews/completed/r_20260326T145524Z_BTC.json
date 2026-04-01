@@ -1,0 +1,17 @@
+{
+  "run_id": "r_20260326T145524Z_BTC",
+  "asset": "BTC",
+  "due_at_utc": "2026-03-25T00:00:00+00:00",
+  "reviewed_at_utc": "2026-03-26T14:56:44.272997+00:00",
+  "run_json_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_showcase/runs/r_20260326T145524Z_BTC/run.json",
+  "review_status": "completed",
+  "initial_decision": "avoid",
+  "decision_outcome": {
+    "initial_close": 69401.945312,
+    "observed_close": 71309.8828125,
+    "observed_at_utc": "2026-03-25",
+    "future_return_pct": 2.749112,
+    "decision_correct": false
+  },
+  "summary": "Initial decision was avoid. Observed forward return was 2.75% over the review horizon, so the call was incorrect."
+}

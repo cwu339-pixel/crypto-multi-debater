@@ -1,0 +1,46 @@
+{
+  "run_id": "r_20260326T145524Z_BTC",
+  "asset": "BTC",
+  "roles": {
+    "technical_analyst": {
+      "title": "Technical Analyst",
+      "markdown_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_showcase/runs/r_20260326T145524Z_BTC/agents/technical_analyst.md",
+      "json_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_showcase/runs/r_20260326T145524Z_BTC/agents/technical_analyst.json"
+    },
+    "defi_fundamentals_analyst": {
+      "title": "DeFi Fundamentals Analyst",
+      "markdown_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_showcase/runs/r_20260326T145524Z_BTC/agents/defi_fundamentals_analyst.md",
+      "json_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_showcase/runs/r_20260326T145524Z_BTC/agents/defi_fundamentals_analyst.json"
+    },
+    "derivatives_analyst": {
+      "title": "Derivatives Analyst",
+      "markdown_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_showcase/runs/r_20260326T145524Z_BTC/agents/derivatives_analyst.md",
+      "json_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_showcase/runs/r_20260326T145524Z_BTC/agents/derivatives_analyst.json"
+    },
+    "news_analyst": {
+      "title": "News Analyst",
+      "markdown_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_showcase/runs/r_20260326T145524Z_BTC/agents/news_analyst.md",
+      "json_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_showcase/runs/r_20260326T145524Z_BTC/agents/news_analyst.json"
+    },
+    "bull_researcher": {
+      "title": "Bull Researcher",
+      "markdown_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_showcase/runs/r_20260326T145524Z_BTC/agents/bull_researcher.md",
+      "json_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_showcase/runs/r_20260326T145524Z_BTC/agents/bull_researcher.json"
+    },
+    "bear_researcher": {
+      "title": "Bear Researcher",
+      "markdown_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_showcase/runs/r_20260326T145524Z_BTC/agents/bear_researcher.md",
+      "json_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_showcase/runs/r_20260326T145524Z_BTC/agents/bear_researcher.json"
+    },
+    "risk_manager": {
+      "title": "Risk Manager",
+      "markdown_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_showcase/runs/r_20260326T145524Z_BTC/agents/risk_manager.md",
+      "json_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_showcase/runs/r_20260326T145524Z_BTC/agents/risk_manager.json"
+    },
+    "final_arbiter": {
+      "title": "Final Arbiter",
+      "markdown_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_showcase/runs/r_20260326T145524Z_BTC/agents/final_arbiter.md",
+      "json_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_showcase/runs/r_20260326T145524Z_BTC/agents/final_arbiter.json"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+sources:
+  openbb:
+    enabled: true
+    lookback_days: 400
+    quote_currency: "USD"
+  binance:
+    enabled: true
+  coinglass:
+    enabled: true
+    base_url: "https://open-api-v4.coinglass.com"
+    api_key_env: "COINGLASS_API_KEY"
+    api_key_header: "CG-API-KEY"
+    max_requests_per_minute: 30
+  defillama:
+    enabled: true
+    base_url: "https://pro-api.llama.fi"
+    api_key_env: "DEFILLAMA_API_KEY"
+    backoff_on_429: true
+  coingecko:
+    enabled: false
+    api_key_env: "COINGECKO_API_KEY"
+    api_key_header: "x-cg-pro-api-key"
+    max_requests_per_minute: 30
+  dune:
+    enabled: false
+    api_key_env: "DUNE_API_KEY"
+    monthly_credit_budget: 2500

@@ -1,0 +1,19 @@
+runtime:
+  timezone: "Asia/Shanghai"
+  review_default_horizon_days: 3
+  max_cost_budget_usd: 10
+  max_latency_sec: 120
+
+output:
+  runs_dir: "runs"
+  research_cards_dir: "research_cards"
+  reviews_dir: "reviews"
+
+scoring:
+  weights:
+    momentum: 0.20
+    liquidity: 0.10
+    derivatives: 0.20
+    defi: 0.20
+    onchain: 0.15
+    sentiment: 0.10

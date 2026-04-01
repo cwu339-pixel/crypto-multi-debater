@@ -1,0 +1,8 @@
+{"role": "technical_analyst", "provider": "deterministic", "analysis_mode": "deterministic_fallback", "timeout_seconds": null, "duration_ms": 0, "validation_error": null}
+{"role": "defi_fundamentals_analyst", "provider": "deterministic", "analysis_mode": "deterministic_fallback", "timeout_seconds": null, "duration_ms": 0, "validation_error": null}
+{"role": "derivatives_analyst", "provider": "deterministic", "analysis_mode": "deterministic_fallback", "timeout_seconds": null, "duration_ms": 0, "validation_error": null}
+{"role": "news_analyst", "provider": "deterministic", "analysis_mode": "deterministic_fallback", "timeout_seconds": null, "duration_ms": 0, "validation_error": null}
+{"role": "bull_researcher", "provider": "deterministic", "analysis_mode": "deterministic_fallback", "timeout_seconds": null, "duration_ms": 0, "validation_error": null}
+{"role": "bear_researcher", "provider": "deterministic", "analysis_mode": "deterministic_fallback", "timeout_seconds": null, "duration_ms": 0, "validation_error": null}
+{"role": "risk_manager", "provider": "deterministic", "analysis_mode": "deterministic_fallback", "timeout_seconds": null, "duration_ms": 0, "validation_error": null}
+{"role": "final_arbiter", "provider": "deterministic", "analysis_mode": "deterministic_fallback", "timeout_seconds": null, "duration_ms": 0, "validation_error": null}

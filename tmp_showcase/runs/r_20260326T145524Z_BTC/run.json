@@ -1,0 +1,42 @@
+{
+  "run_id": "r_20260326T145524Z_BTC",
+  "request": {
+    "asset": "BTC",
+    "thesis": "Showcase crypto multi-debater prompt-driven report",
+    "horizon_days": 3,
+    "as_of_utc": "2026-03-26T14:55:24.893403+00:00"
+  },
+  "stages": {
+    "data_collection": "completed",
+    "feature_engineering": "completed",
+    "evidence_collection": "completed",
+    "multi_role_analysis": "completed",
+    "decisioning": "completed",
+    "review_loop": "scheduled"
+  },
+  "coverage_gaps": [
+    "coinglass:missing_api_key"
+  ],
+  "provenance_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_showcase/runs/r_20260326T145524Z_BTC/provenance.jsonl",
+  "features_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_showcase/runs/r_20260326T145524Z_BTC/features/summary.json",
+  "evidence_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_showcase/runs/r_20260326T145524Z_BTC/evidence/evidence.json",
+  "roles_index_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_showcase/runs/r_20260326T145524Z_BTC/agents/index.json",
+  "roles_call_log_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_showcase/runs/r_20260326T145524Z_BTC/agents/call_log.jsonl",
+  "final_decision": "avoid",
+  "scorecard": {
+    "inputs": {
+      "momentum": 30.43,
+      "liquidity": 80.0,
+      "derivatives": 35.0,
+      "defi": 52.0,
+      "onchain": 41.0,
+      "sentiment": 45.0,
+      "data_quality_penalty": -5.0
+    },
+    "final_score": 37,
+    "confidence": "low",
+    "score_decision": "avoid"
+  },
+  "review_status_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_showcase/reviews/pending/r_20260326T145524Z_BTC.json",
+  "benchmark_summary_path": null
+}
