@@ -1,0 +1,71 @@
+{
+  "run_json": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/run.json",
+  "provenance": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/provenance.jsonl",
+  "features": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/features/summary.json",
+  "feature_notes": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/features/notes.md",
+  "evidence_markdown": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/evidence/evidence.md",
+  "evidence_json": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/evidence/evidence.json",
+  "roles_index": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/agents/index.json",
+  "roles_call_log": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/agents/call_log.jsonl",
+  "research_card": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/research_cards/2026-04-01/BTC_r_20260401T031358Z_BTC.md",
+  "review_status": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/reviews/pending/r_20260401T031358Z_BTC.json",
+  "scorecard": {
+    "inputs": {
+      "momentum": 33.24,
+      "liquidity": 80.0,
+      "derivatives": 35.0,
+      "defi": 40.0,
+      "onchain": 45.0,
+      "sentiment": 45.0,
+      "data_quality_penalty": -10.0
+    },
+    "final_score": 31,
+    "confidence": "low",
+    "score_decision": "avoid"
+  },
+  "raw_data": {
+    "openbb": [
+      "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/raw/openbb/price_history.json"
+    ],
+    "defillama": [],
+    "coinglass": [],
+    "binance": [
+      "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/raw/binance/funding_rate.json",
+      "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/raw/binance/open_interest_hist.json"
+    ]
+  },
+  "roles": {
+    "technical_analyst": {
+      "markdown_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/agents/technical_analyst.md",
+      "json_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/agents/technical_analyst.json"
+    },
+    "defi_fundamentals_analyst": {
+      "markdown_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/agents/defi_fundamentals_analyst.md",
+      "json_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/agents/defi_fundamentals_analyst.json"
+    },
+    "derivatives_analyst": {
+      "markdown_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/agents/derivatives_analyst.md",
+      "json_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/agents/derivatives_analyst.json"
+    },
+    "news_analyst": {
+      "markdown_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/agents/news_analyst.md",
+      "json_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/agents/news_analyst.json"
+    },
+    "bull_researcher": {
+      "markdown_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/agents/bull_researcher.md",
+      "json_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/agents/bull_researcher.json"
+    },
+    "bear_researcher": {
+      "markdown_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/agents/bear_researcher.md",
+      "json_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/agents/bear_researcher.json"
+    },
+    "risk_manager": {
+      "markdown_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/agents/risk_manager.md",
+      "json_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/agents/risk_manager.json"
+    },
+    "final_arbiter": {
+      "markdown_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/agents/final_arbiter.md",
+      "json_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/agents/final_arbiter.json"
+    }
+  }
+}

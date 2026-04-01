@@ -1,0 +1,7 @@
+- Built price-derived features from 400 OpenBB rows.
+- DefiLlama features pending because source data is unavailable.
+- CoinGlass features pending because source data is unavailable.
+- Extracted funding rate features from 100 Binance data points.
+- Extracted OI features from 30 Binance data points.
+- Extracted liquidation features from 30 CoinGlass data points.
+- CoinGlass features pending because source data is unavailable.

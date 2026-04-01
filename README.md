@@ -19,7 +19,7 @@
 - [2026-03] Refocused as a dedicated `crypto multi-debater research product` instead of a mixed benchmark / backtest repo.
 - [2026-03] Full prompt-driven analyst, debate, risk, and final-arbiter stack landed in the live workflow.
 - [2026-03] `open_deep_research` live evidence path stabilized with readable fallback diagnostics.
-- [2026-03] Independent repo showcase refreshed under `tmp_showcase` with a completed review artifact.
+- [2026-04] Homepage showcase refreshed to today's live BTC debate report.
 
 <div align="center">
 
@@ -94,10 +94,9 @@ These roles are sequential, not parallel summaries. Each side responds to the ot
 
 If you want one file that best represents the repo today, open this case:
 
-- run: [`tmp_showcase/runs/r_20260326T145524Z_BTC/run.json`](tmp_showcase/runs/r_20260326T145524Z_BTC/run.json)
-- report: [`tmp_showcase/research_cards/2026-03-26/BTC_r_20260326T145524Z_BTC.md`](tmp_showcase/research_cards/2026-03-26/BTC_r_20260326T145524Z_BTC.md)
-- call log: [`tmp_showcase/runs/r_20260326T145524Z_BTC/agents/call_log.jsonl`](tmp_showcase/runs/r_20260326T145524Z_BTC/agents/call_log.jsonl)
-- review: [`tmp_showcase/reviews/completed/r_20260326T145524Z_BTC.json`](tmp_showcase/reviews/completed/r_20260326T145524Z_BTC.json)
+- run: [`tmp_showcase/runs/r_20260401T031358Z_BTC/run.json`](tmp_showcase/runs/r_20260401T031358Z_BTC/run.json)
+- report: [`tmp_showcase/research_cards/2026-04-01/BTC_r_20260401T031358Z_BTC.md`](tmp_showcase/research_cards/2026-04-01/BTC_r_20260401T031358Z_BTC.md)
+- call log: [`tmp_showcase/runs/r_20260401T031358Z_BTC/agents/call_log.jsonl`](tmp_showcase/runs/r_20260401T031358Z_BTC/agents/call_log.jsonl)
 
 That showcase includes:
 

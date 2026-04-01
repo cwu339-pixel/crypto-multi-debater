@@ -1,0 +1,42 @@
+{
+  "run_id": "r_20260401T031358Z_BTC",
+  "request": {
+    "asset": "BTC",
+    "thesis": "Assess today's BTC setup",
+    "horizon_days": 3,
+    "as_of_utc": "2026-04-01T03:13:58.678759+00:00"
+  },
+  "stages": {
+    "data_collection": "completed",
+    "feature_engineering": "completed",
+    "evidence_collection": "completed",
+    "multi_role_analysis": "completed",
+    "decisioning": "completed",
+    "review_loop": "scheduled"
+  },
+  "coverage_gaps": [
+    "defillama:exception:TimeoutError",
+    "coinglass:missing_api_key"
+  ],
+  "provenance_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/provenance.jsonl",
+  "features_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/features/summary.json",
+  "evidence_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/evidence/evidence.json",
+  "roles_index_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/agents/index.json",
+  "roles_call_log_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/runs/r_20260401T031358Z_BTC/agents/call_log.jsonl",
+  "final_decision": "avoid",
+  "scorecard": {
+    "inputs": {
+      "momentum": 33.24,
+      "liquidity": 80.0,
+      "derivatives": 35.0,
+      "defi": 40.0,
+      "onchain": 45.0,
+      "sentiment": 45.0,
+      "data_quality_penalty": -10.0
+    },
+    "final_score": 31,
+    "confidence": "low",
+    "score_decision": "avoid"
+  },
+  "review_status_path": "/Users/wuchenghan/Projects/crypto-multi-debater/tmp_stability_live_final_network/reviews/pending/r_20260401T031358Z_BTC.json"
+}
