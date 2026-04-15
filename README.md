@@ -91,6 +91,16 @@ These roles are sequential, not parallel summaries. Each side responds to the ot
 - rendered trading-style research report
 - post-horizon review task generation
 
+## Repo Boundaries
+
+To keep the repository auditable, this repo separates maintained source code from reference and showcase output:
+
+- `src/`, `tests/`, `config/`, and `docs/` are the maintained project sources
+- `tmp_showcase/` contains committed example run artifacts used for homepage and demo-case inspection
+- `external/open_deep_research/` is an upstream reference checkout, not the core local implementation
+
+The main engineering changes should land in source directories. Showcase refreshes and upstream syncs should stay intentionally scoped so review diffs remain readable.
+
 ## Best Showcase Right Now
 
 If you want one file that best represents the repo today, open this case:
