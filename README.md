@@ -5,6 +5,7 @@
 ### Debate-Driven Multi-Agent Crypto Research Product
 
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![CI](https://github.com/cwu339-pixel/crypto-multi-debater/actions/workflows/ci.yml/badge.svg)](https://github.com/cwu339-pixel/crypto-multi-debater/actions/workflows/ci.yml)
 [![OpenBB](https://img.shields.io/badge/Data-OpenBB-0A7B83)](https://openbb.co/)
 [![DefiLlama](https://img.shields.io/badge/Data-DefiLlama-111111)](https://defillama.com/)
 [![Research](https://img.shields.io/badge/Evidence-open__deep__research-6B46C1)](https://github.com/)
