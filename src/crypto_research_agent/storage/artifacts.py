@@ -465,6 +465,12 @@ def _render_conclusion(
     asset: str,
     horizon: Any,
 ) -> str:
+    # Prefer the arbiter's one-line `summary` so the Ruling stays a verdict,
+    # leaving the longer `thesis` field exclusively for the Thesis section
+    # (avoids word-for-word duplication between Ruling and Thesis).
+    summary = _strip_data_gap_language(_str_field(final_arbiter, "summary"))
+    if len(summary) > 40:
+        return summary
     thesis = _strip_data_gap_language(_str_field(final_arbiter, "thesis"))
     if len(thesis) > 80:
         return thesis
