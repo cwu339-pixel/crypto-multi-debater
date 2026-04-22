@@ -14,15 +14,9 @@
 
 ---
 
-## News
-- [2026-03] Refocused as a dedicated `crypto multi-debater research product` instead of a mixed benchmark / backtest repo.
-- [2026-03] Full prompt-driven analyst, debate, risk, and final-arbiter stack landed in the live workflow.
-- [2026-03] `open_deep_research` live evidence path stabilized with readable fallback diagnostics.
-- [2026-04] Homepage showcase refreshed to today's live BTC debate report.
-
 <div align="center">
 
-`Overview` | `Framework` | `Installation` | `Quickstart` | `Demo Cases` | `Inspired By`
+`Overview` | `Courtroom Structure` | `Showcase` | `Installation` | `Quickstart` | `Inspired By`
 
 </div>
 
@@ -66,6 +60,25 @@ The system turns a market question into a structured research flow:
 
 `thesis -> data snapshots -> feature summary -> evidence pack -> analyst stack -> bull/bear debate -> risk debate -> final arbiter -> research report`
 
+```mermaid
+flowchart TD
+    T[Thesis + Asset + Horizon] --> D[Data Snapshots<br/>OpenBB · DefiLlama · CoinGlass]
+    D --> F[Feature Summary]
+    F --> E[Evidence Pack<br/>open_deep_research]
+    E --> A[Analyst Stack]
+    A --> A1[Technical]
+    A --> A2[DeFi Fundamentals]
+    A --> A3[Derivatives]
+    A --> A4[News]
+    A1 & A2 & A3 & A4 --> B[Bull Researcher]
+    A1 & A2 & A3 & A4 --> BR[Bear Researcher]
+    B <--> BR
+    B & BR --> R[Risk Debate<br/>Aggressive · Conservative · Neutral]
+    R --> RM[Risk Manager<br/>sizing · invalidation]
+    RM --> J[Final Arbiter<br/>Judge's Ruling]
+    J --> REP[Research Report<br/>+ call_log.jsonl + review task]
+```
+
 ### Bench Evidence
 
 - `Technical Analyst`: reads crypto regime, volatility, RSI, SMA structure, and halving-cycle context
@@ -107,6 +120,17 @@ That separation matters because these are different states:
 
 This is closer to how a real investment committee behaves than a single blended score.
 
+## Why Custom, Not CrewAI / AutoGen / LangGraph
+
+Generic multi-agent frameworks (`CrewAI`, `AutoGen`, `LangGraph`) solve "how do agents coordinate" at a high level of abstraction. This repo solves a narrower, harder problem: **how does an adversarial research process produce an auditable crypto decision?** That required choices a generic framework wouldn't make for me:
+
+- **Sequential, not parallel debate.** The bull must respond to the bear's latest case, and vice versa — parallel agent calls miss the core value of structured disagreement. CrewAI's default parallelism would flatten this into two unrelated summaries.
+- **Crypto-specific role grammar.** `TVL`, `MC/TVL`, `funding`, `liquidation`, `unlock calendars`, `halving-cycle context` — the analyst prompts are written in crypto's native vocabulary, not generic "equity research" templates ported to a token.
+- **Artifact-first, not chat-first.** Every stage writes durable JSON + Markdown to `runs/<run_id>/`. A reader can inspect each analyst's output, the full call log, and the final arbiter's reasoning independently — this is not an agent chat transcript.
+- **Three-axis scorecard, not a single blended score.** `Action Score`, `Confidence`, and `Data Quality` are kept orthogonal on purpose (see "How To Read The Scorecard"). Most framework defaults collapse these into one vague "confidence" number.
+
+Using a generic framework would have shipped faster. It also would have produced exactly the kind of "yet another CrewAI demo" that isn't useful to a real crypto research workflow.
+
 ## Why It Is More Crypto-Specific Than Generic Trading Agents
 
 - It uses `OpenBB`, `DefiLlama`, and `open_deep_research` instead of generic equity-oriented analyst inputs.
@@ -124,6 +148,10 @@ This is closer to how a real investment committee behaves than a single blended 
 - prompt-driven risk layer and final arbiter
 - rendered trading-style research report
 - post-horizon review task generation
+
+### Cost And Runtime
+
+A single full run issues **~8 LLM calls** (4 analysts + bull + bear + risk + arbiter), totalling roughly **~2 minutes of LLM wall-time** on the showcase BTC case (see `showcase/runs/r_20260401T031358Z_BTC/agents/call_log.jsonl`). End-to-end cost is in the **~$0.10-0.50 per run** range depending on model tier (mini-class models land near the low end). The system is designed to be inspected run-by-run, not to be spammed at high frequency.
 
 ## Repo Boundaries
 
@@ -236,4 +264,11 @@ Run pending reviews:
 - `DefiLlama`: DeFi and protocol datasets
 - `open_deep_research`: evidence collection pattern
 
-The contribution here is not inventing every component from scratch. The contribution is adapting the `TradingAgents` debate idea into a crypto-native research product with better crypto inputs, clearer artifacts, and a more auditable report flow.
+**My contribution is the court-style adaptation**: the sequential bull vs. bear debate, the three-axis scorecard (Action Score / Confidence / Data Quality), the risk-stage sentencing layer, and the auditable research card format are designed specifically for crypto decision-making — not inherited from `TradingAgents`. The data stack (`OpenBB` + `DefiLlama` + `open_deep_research`) replaces the equity-oriented inputs of upstream frameworks with sources that match how crypto research actually gets done.
+
+## Changelog
+
+- [2026-04] Homepage showcase refreshed to a live BTC debate report.
+- [2026-03] `open_deep_research` live evidence path stabilized with readable fallback diagnostics.
+- [2026-03] Full prompt-driven analyst, debate, risk, and final-arbiter stack landed in the live workflow.
+- [2026-03] Refocused as a dedicated `crypto multi-debater research product` instead of a mixed benchmark / backtest repo.
