@@ -1,0 +1,85 @@
+{
+  "run_json": "showcase/runs/r_20260422T063929Z_BTC/run.json",
+  "provenance": "showcase/runs/r_20260422T063929Z_BTC/provenance.jsonl",
+  "features": "showcase/runs/r_20260422T063929Z_BTC/features/summary.json",
+  "feature_notes": "showcase/runs/r_20260422T063929Z_BTC/features/notes.md",
+  "evidence_markdown": "showcase/runs/r_20260422T063929Z_BTC/evidence/evidence.md",
+  "evidence_json": "showcase/runs/r_20260422T063929Z_BTC/evidence/evidence.json",
+  "roles_index": "showcase/runs/r_20260422T063929Z_BTC/agents/index.json",
+  "roles_call_log": "showcase/runs/r_20260422T063929Z_BTC/agents/call_log.jsonl",
+  "roles_debate_log": "showcase/runs/r_20260422T063929Z_BTC/agents/debate_log.jsonl",
+  "research_card": "showcase/research_cards/2026-04-22/BTC_r_20260422T063929Z_BTC.md",
+  "review_status": "showcase/reviews/pending/r_20260422T063929Z_BTC.json",
+  "scorecard": {
+    "inputs": {
+      "momentum": 56.7,
+      "liquidity": 80.0,
+      "derivatives": 60.0,
+      "defi": 56.0,
+      "onchain": 44.38,
+      "sentiment": 45.0,
+      "data_quality_penalty": -5.0
+    },
+    "action_score": 49,
+    "final_score": 49,
+    "confidence": "low",
+    "score_decision": "avoid",
+    "data_quality": {
+      "core_complete": true,
+      "supplementary_complete": false,
+      "core_gaps": [],
+      "supplementary_gaps": [
+        "coinglass:missing_api_key"
+      ],
+      "penalty": -5.0
+    }
+  },
+  "raw_data": {
+    "openbb": [
+      "showcase/runs/r_20260422T063929Z_BTC/raw/openbb/price_history.json"
+    ],
+    "defillama": [
+      "showcase/runs/r_20260422T063929Z_BTC/raw/defillama/protocols.json",
+      "showcase/runs/r_20260422T063929Z_BTC/raw/defillama/yields_pools.json"
+    ],
+    "coinglass": [],
+    "binance": [
+      "showcase/runs/r_20260422T063929Z_BTC/raw/binance/funding_rate.json",
+      "showcase/runs/r_20260422T063929Z_BTC/raw/binance/open_interest_hist.json"
+    ]
+  },
+  "roles": {
+    "technical_analyst": {
+      "markdown_path": "showcase/runs/r_20260422T063929Z_BTC/agents/technical_analyst.md",
+      "json_path": "showcase/runs/r_20260422T063929Z_BTC/agents/technical_analyst.json"
+    },
+    "defi_fundamentals_analyst": {
+      "markdown_path": "showcase/runs/r_20260422T063929Z_BTC/agents/defi_fundamentals_analyst.md",
+      "json_path": "showcase/runs/r_20260422T063929Z_BTC/agents/defi_fundamentals_analyst.json"
+    },
+    "derivatives_analyst": {
+      "markdown_path": "showcase/runs/r_20260422T063929Z_BTC/agents/derivatives_analyst.md",
+      "json_path": "showcase/runs/r_20260422T063929Z_BTC/agents/derivatives_analyst.json"
+    },
+    "news_analyst": {
+      "markdown_path": "showcase/runs/r_20260422T063929Z_BTC/agents/news_analyst.md",
+      "json_path": "showcase/runs/r_20260422T063929Z_BTC/agents/news_analyst.json"
+    },
+    "bull_researcher": {
+      "markdown_path": "showcase/runs/r_20260422T063929Z_BTC/agents/bull_researcher.md",
+      "json_path": "showcase/runs/r_20260422T063929Z_BTC/agents/bull_researcher.json"
+    },
+    "bear_researcher": {
+      "markdown_path": "showcase/runs/r_20260422T063929Z_BTC/agents/bear_researcher.md",
+      "json_path": "showcase/runs/r_20260422T063929Z_BTC/agents/bear_researcher.json"
+    },
+    "risk_manager": {
+      "markdown_path": "showcase/runs/r_20260422T063929Z_BTC/agents/risk_manager.md",
+      "json_path": "showcase/runs/r_20260422T063929Z_BTC/agents/risk_manager.json"
+    },
+    "final_arbiter": {
+      "markdown_path": "showcase/runs/r_20260422T063929Z_BTC/agents/final_arbiter.md",
+      "json_path": "showcase/runs/r_20260422T063929Z_BTC/agents/final_arbiter.json"
+    }
+  }
+}

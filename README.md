@@ -151,7 +151,7 @@ Using a generic framework would have shipped faster. It also would have produced
 
 ### Cost And Runtime
 
-A single full run issues **~8 LLM calls** (4 analysts + bull + bear + risk + arbiter), totalling roughly **~2 minutes of LLM wall-time** on the showcase BTC case (see `showcase/runs/r_20260401T031358Z_BTC/agents/call_log.jsonl`). End-to-end cost is in the **~$0.10-0.50 per run** range depending on model tier (mini-class models land near the low end). The system is designed to be inspected run-by-run, not to be spammed at high frequency.
+A single full run issues **~8 LLM calls** (4 analysts + bull + bear + risk + arbiter), totalling roughly **~2 minutes of LLM wall-time** on the showcase BTC case (see `showcase/runs/r_20260422T063929Z_BTC/agents/call_log.jsonl`). End-to-end cost is in the **~$0.10-0.50 per run** range depending on model tier (mini-class models land near the low end). The system is designed to be inspected run-by-run, not to be spammed at high frequency.
 
 ## Repo Boundaries
 
@@ -167,9 +167,9 @@ The main engineering changes should land in source directories. Showcase refresh
 
 If you want one file that best represents the repo today, open this case:
 
-- run: [`showcase/runs/r_20260401T031358Z_BTC/run.json`](showcase/runs/r_20260401T031358Z_BTC/run.json)
-- report: [`showcase/research_cards/2026-04-01/BTC_r_20260401T031358Z_BTC.md`](showcase/research_cards/2026-04-01/BTC_r_20260401T031358Z_BTC.md)
-- call log: [`showcase/runs/r_20260401T031358Z_BTC/agents/call_log.jsonl`](showcase/runs/r_20260401T031358Z_BTC/agents/call_log.jsonl)
+- run: [`showcase/runs/r_20260422T063929Z_BTC/run.json`](showcase/runs/r_20260422T063929Z_BTC/run.json)
+- report: [`showcase/research_cards/2026-04-22/BTC_r_20260422T063929Z_BTC.md`](showcase/research_cards/2026-04-22/BTC_r_20260422T063929Z_BTC.md)
+- call log: [`showcase/runs/r_20260422T063929Z_BTC/agents/call_log.jsonl`](showcase/runs/r_20260422T063929Z_BTC/agents/call_log.jsonl)
 
 That showcase includes:
 
@@ -268,7 +268,7 @@ Run pending reviews:
 
 ## Changelog
 
-- [2026-04] Homepage showcase refreshed to a live BTC debate report.
+- [2026-04-22] Homepage showcase refreshed to a live BTC debate report; arbiter render fix ships separate Ruling (verdict) and Thesis (rationale) lines.
 - [2026-03] `open_deep_research` live evidence path stabilized with readable fallback diagnostics.
 - [2026-03] Full prompt-driven analyst, debate, risk, and final-arbiter stack landed in the live workflow.
 - [2026-03] Refocused as a dedicated `crypto multi-debater research product` instead of a mixed benchmark / backtest repo.

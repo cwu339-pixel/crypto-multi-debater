@@ -1,0 +1,8 @@
+- Built price-derived features from 401 OpenBB rows.
+- No DefiLlama protocols found for chain matching 'BTC'.
+- Extracted yield features from 3406 stablecoin pools (top 20 by TVL).
+- CoinGlass features pending because source data is unavailable.
+- Extracted funding rate features from 100 Binance data points.
+- Extracted OI features from 30 Binance data points.
+- Extracted liquidation features from 30 CoinGlass data points.
+- CoinGlass features pending because source data is unavailable.

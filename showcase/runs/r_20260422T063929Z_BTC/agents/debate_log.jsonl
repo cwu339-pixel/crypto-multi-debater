@@ -1,0 +1,6 @@
+{"stance": "aggressive", "event": "start", "provider": "openai", "timeout_seconds": 30, "prompt_chars": 58947, "state_count": 0, "recorded_at_utc": 1776840124.85917}
+{"stance": "aggressive", "event": "end", "provider": "openai", "timeout_seconds": 30, "prompt_chars": 58947, "state_count": 1, "recorded_at_utc": 1776840133.426646}
+{"stance": "conservative", "event": "start", "provider": "openai", "timeout_seconds": 30, "prompt_chars": 64884, "state_count": 1, "recorded_at_utc": 1776840133.4277189}
+{"stance": "conservative", "event": "end", "provider": "openai", "timeout_seconds": 30, "prompt_chars": 64884, "state_count": 2, "recorded_at_utc": 1776840141.7856379}
+{"stance": "neutral", "event": "start", "provider": "openai", "timeout_seconds": 30, "prompt_chars": 69525, "state_count": 2, "recorded_at_utc": 1776840141.786767}
+{"stance": "neutral", "event": "end", "provider": "openai", "timeout_seconds": 30, "prompt_chars": 69525, "state_count": 3, "recorded_at_utc": 1776840148.167082}

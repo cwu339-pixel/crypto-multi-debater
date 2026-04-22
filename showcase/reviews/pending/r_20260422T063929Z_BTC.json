@@ -1,0 +1,11 @@
+{
+  "run_id": "r_20260422T063929Z_BTC",
+  "asset": "BTC",
+  "thesis": "Assess BTC setup as of 2026-04-22",
+  "horizon_days": 3,
+  "scheduled_at_utc": "2026-04-22T06:39:29.877515+00:00",
+  "due_at_utc": "2026-04-25T06:39:29.877515+00:00",
+  "output_root": "showcase",
+  "run_json_path": "showcase/runs/r_20260422T063929Z_BTC/run.json",
+  "status": "pending"
+}

@@ -1,0 +1,56 @@
+{
+  "run_id": "r_20260422T063929Z_BTC",
+  "request": {
+    "asset": "BTC",
+    "thesis": "Assess BTC setup as of 2026-04-22",
+    "horizon_days": 3,
+    "as_of_utc": "2026-04-22T06:39:29.877515+00:00"
+  },
+  "status": "completed",
+  "failed_stage": null,
+  "error_type": null,
+  "error_detail": null,
+  "stages": {
+    "data_collection": "completed",
+    "feature_engineering": "completed",
+    "evidence_collection": "completed",
+    "multi_role_analysis": "completed",
+    "decisioning": "completed",
+    "review_loop": "scheduled"
+  },
+  "coverage_gaps": [
+    "coinglass:missing_api_key"
+  ],
+  "provenance_path": "showcase/runs/r_20260422T063929Z_BTC/provenance.jsonl",
+  "features_path": "showcase/runs/r_20260422T063929Z_BTC/features/summary.json",
+  "evidence_path": "showcase/runs/r_20260422T063929Z_BTC/evidence/evidence.json",
+  "roles_index_path": "showcase/runs/r_20260422T063929Z_BTC/agents/index.json",
+  "roles_call_log_path": "showcase/runs/r_20260422T063929Z_BTC/agents/call_log.jsonl",
+  "roles_debate_log_path": "showcase/runs/r_20260422T063929Z_BTC/agents/debate_log.jsonl",
+  "final_decision": "hold",
+  "scorecard": {
+    "inputs": {
+      "momentum": 56.7,
+      "liquidity": 80.0,
+      "derivatives": 60.0,
+      "defi": 56.0,
+      "onchain": 44.38,
+      "sentiment": 45.0,
+      "data_quality_penalty": -5.0
+    },
+    "action_score": 49,
+    "final_score": 49,
+    "confidence": "low",
+    "score_decision": "avoid",
+    "data_quality": {
+      "core_complete": true,
+      "supplementary_complete": false,
+      "core_gaps": [],
+      "supplementary_gaps": [
+        "coinglass:missing_api_key"
+      ],
+      "penalty": -5.0
+    }
+  },
+  "review_status_path": "showcase/reviews/pending/r_20260422T063929Z_BTC.json"
+}
