@@ -28,6 +28,7 @@ def test_collect_market_data_skips_coinglass_without_key(
             "sources": {
                 "openbb": {"enabled": False},
                 "defillama": {"enabled": False},
+                "binance": {"enabled": False},
                 "coinglass": {
                     "enabled": True,
                     "base_url": "https://open-api-v4.coinglass.com",
