@@ -2,7 +2,7 @@
 
 # Crypto Multi-Debater
 
-### Debate-Driven Multi-Agent Crypto Research Product
+### Court-Style Debate-Driven Crypto Research Product
 
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![CI](https://github.com/cwu339-pixel/crypto-multi-debater/actions/workflows/ci.yml/badge.svg)](https://github.com/cwu339-pixel/crypto-multi-debater/actions/workflows/ci.yml)
@@ -13,8 +13,6 @@
 </div>
 
 ---
-
-# Crypto Multi-Debater: Multi-Agent Crypto Research Framework
 
 ## News
 - [2026-03] Refocused as a dedicated `crypto multi-debater research product` instead of a mixed benchmark / backtest repo.
@@ -30,48 +28,84 @@
 
 ## Overview
 
-Crypto Multi-Debater is a crypto-specific research product that adapts the debate-oriented architecture of `TradingAgents` to the crypto domain.
+Crypto Multi-Debater is a crypto-specific, court-style research product built around structured analyst evidence, adversarial debate, and final arbitration.
 
 Instead of treating crypto as generic financial text generation, this repo uses:
 
 - crypto-native data sources
 - crypto-specific analyst roles
 - sequential bull/bear and risk debates
-- a final arbiter that turns debate into a trading-style research report
+- a final arbiter that turns debate into a courtroom-style ruling
 - auditable artifacts and review tasks
 
 This project is strongest as a **crypto multi-debater research product**, not as an auto-trading system or backtesting lab.
 
-## Framework
+## Project Positioning
+
+The cleanest way to describe this repo is:
+
+- a `court-style multi-agent decision harness` for crypto research
+- not a single-prompt chatbot
+- not a naive score-only trading bot
+
+The value is in the workflow discipline:
+
+- analysts gather different classes of evidence
+- bull and bear roles argue sequentially
+- risk roles constrain position size and invalidation logic
+- a final arbiter issues the ruling
+- artifacts, call logs, and review tasks preserve the reasoning trail
+
+If you are presenting this project, the right framing is:
+
+> "I built an investment research court, not a slogan generator. The system separates evidence gathering, adversarial debate, risk control, and final judgment into auditable stages."
+
+## Courtroom Structure
 
 The system turns a market question into a structured research flow:
 
 `thesis -> data snapshots -> feature summary -> evidence pack -> analyst stack -> bull/bear debate -> risk debate -> final arbiter -> research report`
 
-### Analyst Team
+### Bench Evidence
 
 - `Technical Analyst`: reads crypto regime, volatility, RSI, SMA structure, and halving-cycle context
 - `DeFi Fundamentals Analyst`: reads TVL, stablecoin yields, MC/TVL, and protocol-level capital signals
 - `Derivatives Analyst`: reads funding, OI, liquidation stress, and leverage structure when available
 - `News Analyst`: interprets crypto catalysts, regulation, unlocks, and macro spillover from the evidence layer
 
-### Debate Layer
+### Defense And Prosecution
 
 - `Bull Researcher`: argues for continuation, asymmetry, and upside path
 - `Bear Researcher`: argues for fragility, regime failure, and downside path
 
 These roles are sequential, not parallel summaries. Each side responds to the other side's latest case.
 
-### Risk Layer
+### Sentencing And Guardrails
 
 - `Aggressive`, `Conservative`, and `Neutral` risk views are synthesized inside the risk stage
 - `Risk Manager` converts the debate into sizing, invalidation, and posture constraints
 
-### Final Arbiter
+### Judge's Ruling
 
 - reads the analyst stack, bull/bear debate, and risk debate
 - produces the final trading-style report
 - exposes decision, rationale, key factors, and hard rules
+
+## How To Read The Scorecard
+
+The report intentionally separates three ideas that are often conflated in weaker agent systems:
+
+- `Action Score`: the baseline action inclination on a 0-100 scale. It is not a return forecast and not "probability BTC goes up."
+- `Confidence`: how strongly the core market signals agree with each other. It is not just "how many APIs responded."
+- `Data Quality`: an explicit record of missing core vs supplementary inputs. Supplementary gaps contribute at most a single `-5` penalty; they should not dominate the thesis.
+
+That separation matters because these are different states:
+
+- `high-confidence avoid`: the system is very sure the prudent action is defensive
+- `low-confidence avoid`: the system cannot justify risk-taking because the picture is unclear
+- `hold`: the quantitative baseline is cautious, but the final arbiter may still choose a less extreme posture after weighing the debate
+
+This is closer to how a real investment committee behaves than a single blended score.
 
 ## Why It Is More Crypto-Specific Than Generic Trading Agents
 
@@ -96,7 +130,7 @@ These roles are sequential, not parallel summaries. Each side responds to the ot
 To keep the repository auditable, this repo separates maintained source code from reference and showcase output:
 
 - `src/`, `tests/`, `config/`, and `docs/` are the maintained project sources
-- `tmp_showcase/` contains committed example run artifacts used for homepage and demo-case inspection
+- `showcase/` contains committed example run artifacts used for homepage and demo-case inspection
 - `external/open_deep_research/` is an upstream reference checkout, not the core local implementation
 
 The main engineering changes should land in source directories. Showcase refreshes and upstream syncs should stay intentionally scoped so review diffs remain readable.
@@ -105,9 +139,9 @@ The main engineering changes should land in source directories. Showcase refresh
 
 If you want one file that best represents the repo today, open this case:
 
-- run: [`tmp_showcase/runs/r_20260401T031358Z_BTC/run.json`](tmp_showcase/runs/r_20260401T031358Z_BTC/run.json)
-- report: [`tmp_showcase/research_cards/2026-04-01/BTC_r_20260401T031358Z_BTC.md`](tmp_showcase/research_cards/2026-04-01/BTC_r_20260401T031358Z_BTC.md)
-- call log: [`tmp_showcase/runs/r_20260401T031358Z_BTC/agents/call_log.jsonl`](tmp_showcase/runs/r_20260401T031358Z_BTC/agents/call_log.jsonl)
+- run: [`showcase/runs/r_20260401T031358Z_BTC/run.json`](showcase/runs/r_20260401T031358Z_BTC/run.json)
+- report: [`showcase/research_cards/2026-04-01/BTC_r_20260401T031358Z_BTC.md`](showcase/research_cards/2026-04-01/BTC_r_20260401T031358Z_BTC.md)
+- call log: [`showcase/runs/r_20260401T031358Z_BTC/agents/call_log.jsonl`](showcase/runs/r_20260401T031358Z_BTC/agents/call_log.jsonl)
 
 That showcase includes:
 
@@ -117,7 +151,7 @@ That showcase includes:
 - bull/bear debate
 - risk debate
 - prompt-driven final arbiter
-- rendered report with visible debate structure
+- rendered report with visible court-style debate structure
 
 ## Demo Cases
 
@@ -130,7 +164,7 @@ That showcase includes:
 Clone the repo:
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/cwu339-pixel/crypto-multi-debater.git
 cd crypto-multi-debater
 ```
 
@@ -162,16 +196,22 @@ Run tests:
 PYTHONPATH=src .venv/bin/python -m pytest -q
 ```
 
+Run the environment baseline check before live jobs:
+
+```bash
+.venv/bin/crypto-multi-debater preflight
+```
+
 Run a live research job:
 
 ```bash
-crypto-multi-debater run --asset BTC --horizon-days 3 --thesis "Assess BTC after recent rally"
+.venv/bin/crypto-multi-debater run --asset BTC --horizon-days 3 --thesis "Assess BTC after recent rally"
 ```
 
 Run pending reviews:
 
 ```bash
-crypto-multi-debater run-pending-reviews --output-dir .
+.venv/bin/crypto-multi-debater run-pending-reviews --output-dir .
 ```
 
 ## Data And Evidence Modes
