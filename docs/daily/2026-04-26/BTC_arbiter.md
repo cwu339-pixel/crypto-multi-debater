@@ -4,28 +4,31 @@
 - title: Final Arbiter
 - decision: {'action': 'avoid', 'direction': 'neutral', 'horizon_days': 7, 'position_size': 'none'}
 - decision_label: avoid
-- thesis: Net call: avoid over the next 7 days. The quantitative stack prints 28 with low confidence, and the combined read still looks more like risk control than a clean offensive entry.
-- confidence: low
+- thesis: After weighing all inputs, the prudent stance is to avoid new BTC exposure at this time given significant data gaps across core technical, derivatives, and on-chain signals. The risk manager’s elevated caution and recommendation to reduce size underscores the structural uncertainty and potential latent tail risks posed by missing funding rate and open interest data. From the Aggressive perspective, while the 12-18 month post-halving window and stable DeFi TVL suggest structural support, the lack of volume and RSI blocks tactical confirmation or breakout validation. The Conservative view rightly prioritizes capital preservation amid unknown leverage and liquidity risks, favoring restraint until more complete data emerges. The neutral stance aligns with this balance, maintaining optionality but no commitment. Entry is only justified once BTC sustains closes above the 200-day SMA on strong volume coupled with restored positive derivatives funding and open interest trends, and evidence of stablecoin capital inflows, which would increase confidence materially. Until then, avoid new longs and manage existing risk tightly.
+- confidence: medium
 ## Key Factors
-- {'factor': 'cautious', 'source_role': 'technical_analyst'}
-- {'factor': 'coverage_gap', 'source_role': 'defi_fundamentals_analyst'}
-- {'factor': 'insufficient_data', 'source_role': 'derivatives_analyst'}
+- Elevated risk and structural uncertainty due to missing derivatives data (risk_manager)
+- Insufficient technical confirmation from price, volume, RSI, and moving averages (technical_analyst)
+- Mature but subdued DeFi environment with stagnant stablecoin APYs and lack of clear capital inflows (defi_fundamentals_analyst)
 ## Key Risks
-- {'risk': 'Coverage gaps reduce conviction', 'mitigation': 'Wait for derivatives confirmation', 'source_role': 'risk_manager'}
-- entry_logic: Avoid entry. Conditions do not support a long position.
-- stop_logic: Initial stop = 1× ATR below entry. Hard structural stop: daily close below SMA50 on expanding volume. If ATR data available: size so 1 ATR stop equals 0.5–1% of portfolio equity.
+- {'risk': 'Unexpected liquidation cascades or leverage deleveraging hidden by missing derivatives data', 'mitigation': 'Strict risk sizing and abstaining from new exposure until data returns', 'source_role': 'risk_manager'}
+- {'risk': 'False breakout or failed trend confirmation due to absent volume and RSI signals', 'mitigation': 'Wait for strong volume and RSI confirmation above key moving averages', 'source_role': 'technical_analyst'}
+- {'risk': 'Sudden DeFi capital outflows reducing ecosystem leverage and price support', 'mitigation': 'Monitor on-chain stablecoin supply and lending utilization on data restoration', 'source_role': 'defi_fundamentals_analyst'}
+- entry_logic: Enter longs only after BTC closes above 200-day SMA on expanding volume (above 1.5x average) with RSI rising above 50 and positive confirmed derivatives funding rates sustained for 3+ days alongside increasing open interest indicating trend participation. Additionally, stablecoin supply metrics should confirm capital inflows to DeFi.
+- stop_logic: Initial stop = 1× ATR below entry price to limit risk to one day’s volatility (~X USD). Hard stop if BTC closes below 200-day SMA on volume > average, signaling regime break.
 ## Targets
-- sizing_formula: Risk 0.5–1% of portfolio per trade. Size so 1 ATR stop = that dollar risk amount. Cap total tactical exposure at 0% of portfolio.
+- sizing_formula: No new allocation until confirmed signals. Upon entry, risk 0.5–1% of portfolio per trade with position scaled by confidence: full size if strong confirmation, quarter size if marginal. Caps on total crypto exposure due to data uncertainty.
 ## Flip Rules
-- {'condition': 'Daily close below SMA50 on expanding down-volume with MACD turning negative', 'new_posture': 'Immediate full exit; reassess for short setup'}
-- {'condition': '5+ consecutive daily closes above 200-SMA with rising MACD and stablecoin inflows confirmed', 'new_posture': 'Upgrade to longer-term Buy at full size'}
-- tactical_alternative: For conservative mandates: use defined-loss call spreads (premium ≤ 0.5% of portfolio) instead of spot exposure. If spot, reduce single-trade risk to 0.25% and widen stops to 1.5× ATR.
+- {'condition': 'BTC sustains 5 consecutive daily closes above 200-day SMA on rising volume and RSI above 60, with positive funding rates > +0.01% sustained', 'new_posture': 'Upgrade to medium-term buy, half to full size'}
+- {'condition': 'BTC closes below 200-day SMA on heavy volume (>1.5x avg) and derivatives show negative funding or surge in liquidations', 'new_posture': 'Downgrade to sell, close positions'}
+- tactical_alternative: For less risk-averse mandates, consider defined-loss option structures or size exposure to quarter position with wider stops to hedge data risk while maintaining optionality.
 ## Invalidation
-- Quant score rises above the hold threshold with better source coverage.
-- Catalyst coverage improves and contradicts the current cautious stance.
-- review_plan: {'review_at_days': 7, 'what_to_check': ['future_return_pct', 'scorecard drift', 'coverage_gaps']}
-- override_note: None
-- rejected_alternative: {'alternative_action': 'buy', 'why_rejected': 'Insufficient confirmation from 2+ roles; scorecard threshold not met or coverage gaps dominate the risk picture.'}
+- Sustained daily closes above 200-day SMA on expanding volume
+- Restoration of positive derivatives funding rate signals and open interest growth
+- Stablecoin supply growth confirming capital inflows
+- review_plan: {'review_at_days': 7, 'what_to_check': ['BTC price relation to 200-day SMA and volume', 'Derivatives funding rate and open interest metrics', 'DeFi stablecoin supply and lending APY trends']}
+- override_note: Scorecard baseline 'avoid' decision retained due to critical data gaps and risk manager’s elevated caution overriding bullish bias from macro post-halving window and nominal DeFi fundamentals.
+- rejected_alternative: {'alternative_action': 'buy', 'why_rejected': 'Lack of technical and derivatives confirmation, alongside risk management warnings and data gaps, precludes justified bullish entry at this time.'}
 - summary: The integrated crypto read stays avoid: score=28, regime=range_bound, MC/TVL=None, funding=None. The system sees enough fragility to stay conservative rather than press for directional size.
 ## Rationale
 - cautious
@@ -34,8 +37,8 @@
 - elevated
 - score=28
 - scorecard: {'inputs': {'momentum': 45.0, 'liquidity': 35.0, 'derivatives': 35.0, 'defi': 60.0, 'onchain': 45.0, 'sentiment': 50.0, 'data_quality_penalty': -15.0}, 'final_score': 28, 'confidence': 'low', 'score_decision': 'avoid'}
-- provider: deterministic
-- analysis_mode: deterministic_fallback
+- provider: openai
+- analysis_mode: prompt_driven
 - prompt_path: /home/runner/work/crypto-multi-debater/crypto-multi-debater/src/crypto_research_agent/agents/prompts/final_arbiter.md
 - prompt_text: # Final Arbiter
 
@@ -141,7 +144,7 @@ Return only a compact JSON object.
     "asset": "BTC",
     "thesis": "Automated daily research for BTC on 2026-04-26",
     "horizon_days": 7,
-    "run_id": "r_20260426T143518Z_BTC"
+    "run_id": "r_20260426T143618Z_BTC"
   },
   "role_context": {
     "market_context": {
@@ -178,75 +181,79 @@ Return only a compact JSON object.
     },
     "prior_role_memos": {
       "technical_analyst": {
-        "summary": "BTC still looks range_bound: momentum has improved, but spot remains None% away from the 200-day trend and needs follow-through above nearby resistance.",
+        "summary": "Current technical conditions lack sufficient direct data inputs due to significant coverage gaps (lack of volume, price action, RSI, and moving average values). Without these key metrics, regime classification is uncertain, and conviction is low. Critical indicators like RSI and SMA crossovers cannot be confirmed, and volume data required to validate breakout or breakdowns are absent. Given crypto-specific thresholds for RSI and moving averages, without price vs 200-day SMA or 50-day/40-day SMA data, trend bias cannot be established. The absence of volatility measures like ATR or BB/Keltner squeezes further obscures volatility regime assessment. Thus, no actionable internal technical signal can be reliably offered. The base case is a cautious wait for data confirmation, watching for a golden cross with strong volume (>1.5x avg) for a bullish setup or volume spikes on key support break for bearish confirmation. Monitoring macro factors\u2014DXY direction, S&P sell-offs, halving cycle phase\u2014is recommended to supplement technical framework. Invalidation of a bullish bias would occur if price closes sustainably below the 200-day SMA or if bearish RSI readings dip below 20 with volume confirming breakdowns. Coverage gaps necessitate low conviction until input data improves.",
         "signal": "cautious",
         "confidence": "medium",
-        "regime": "range_bound",
-        "referenced_fields": null,
+        "regime": "uncertain",
+        "referenced_fields": [],
         "support": null,
         "resistance": null
       },
       "defi_fundamentals_analyst": {
-        "summary": "DeFi internals are mixed: MC/TVL sits at None, while stablecoin yield changes remain mild. That is enough to avoid a hard bearish read, but not enough to call broad-based capital expansion.",
-        "signal": "coverage_gap",
-        "confidence": null,
-        "stablecoin_signals": "Stablecoin median APY is 3.65; 7d APY change is -0.0742; MC/TVL ratio is None.",
+        "summary": "DeFi TVL stands at $552B nationally, reflecting scale but with stablecoin lending APYs subdued around 3.7%, indicative of a low leverage, risk-off environment. The slight decline in APY over the last 7 days (-0.07%) and lack of data on protocol-level fees, lending utilization, unique wallet growth, or stablecoin supply growth limits confidence in bullish DeFi narratives. Without user growth data, there is risk TVL stability masks capital concentration or passive holdings. Coverage gaps from major data providers further restrict granularity. Overall, evidence suggests a mature, low-volatility DeFi market with insufficient inflows or leverage demand, consistent with a sideways to cautious near-term stance.",
+        "signal": "neutral",
+        "confidence": "low",
+        "stablecoin_signals": "No stablecoin supply growth data provided; unable to confirm capital inflow or outflow trends. Stability of APYs and lack of yield spikes suggests neutral to mildly bearish capital positioning.",
         "data_gaps": [
-          "openbb:openbb_not_installed",
-          "coinglass:missing_api_key",
-          "binance:exception:HTTPError"
+          "Lack of comprehensive user activity data preventing judgment on capital concentration and TVL quality",
+          "Absence of stablecoin supply and dominance metrics restricting macro capital flow assessment",
+          "Missing lending protocol utilization and big-wallet activity data limiting stress and risk insights"
         ]
       },
       "derivatives_analyst": {
-        "summary": "CoinGlass-derived positioning is unavailable, so derivatives conviction remains constrained.",
-        "signal": "insufficient_data",
-        "confidence": null,
-        "positioning_thesis": "CoinGlass-derived positioning is unavailable, so derivatives conviction remains constrained.",
+        "summary": "Derivatives-based conviction for BTC on 2026-04-26 is limited due to missing data across most key metrics, including funding rates, open interest, and liquidations. Without coinglass or exchange data, key crowding and leverage signals cannot be assessed, nor can market fragility or risk of liquidation cascades be evaluated. This results in a neutral baseline stance, with only spot momentum as a very weak proxy, insufficient for directional inference. Practitioners are advised to treat current positioning as uncertain and wait for restoration of reliable derivatives feeds before committing. Key triggers that would upgrade conviction include sustained high funding, rising OI confirming genuine long trends, or large liquidation events signaling stress. Until then, derivatives-related risk management should remain cautious and rely on spot and other market signals.",
+        "signal": "neutral",
+        "confidence": "low",
+        "positioning_thesis": "Derivatives data coverage for BTC is absent, including funding rates, open interest, liquidations, basis, and leverage metrics, constraining any confident derivative-based positioning. Without coinglass or exchange-level data, no funding or crowding signals are available. Consequently, derivatives conviction is low. The current signal is neutral by default, relying only on weak spot momentum proxy. This leads to a cautious stance with no strong lean on either long or short. Traders should rely on other data sources or wait for restored derivatives signals to better assess risk and positioning.",
         "data_gaps": [
-          "openbb:openbb_not_installed",
-          "coinglass:missing_api_key",
-          "binance:exception:HTTPError"
+          "Current funding rate levels and trends are unknown due to missing coinglass data",
+          "Open interest size, flow, and composition are unavailable, preventing assessment of new longs vs. shorts, or fatigue",
+          "Liquidations volume and long/short imbalance data are absent, hiding potential deleveraging events",
+          "Futures basis and premium status cannot be evaluated to gauge institutional sentiment or euphoric greed",
+          "No CVD data to confirm authenticity of price moves vs. derivative positioning"
         ]
       },
       "news_analyst": {
-        "summary": "Headline and catalyst coverage is stub; nothing clearly breaks the setup, but the event map is still incomplete.",
+        "summary": "Due to a lack of current and reliable evidence, no actionable catalysts or risks for BTC can be identified within the next week. The coverage gaps and evidence status marked as a stub indicate that the analysis cannot incorporate meaningful market-moving or sector-specific events. Without additional data on regulatory developments, protocol upgrades, or macroeconomic surprises, no near-term catalyst call is warranted.",
         "signal": "monitor",
         "confidence": null,
         "evidence_quality": "stub",
-        "top_risk": "External catalyst coverage is preliminary."
+        "top_risk": null
       },
       "bull_researcher": {
-        "thesis": "Momentum remains constructive, but needs confirmation.",
-        "argument": "Bull Analyst: Momentum remains constructive, but needs confirmation. Missing derivatives data does not automatically invalidate price resilience.",
-        "confidence": "low",
-        "top_point": "Short-term momentum remains constructive.",
-        "top_rebuttal": "Missing derivatives data does not automatically invalidate price resilience.",
+        "thesis": "Despite significant data gaps, the BTC macro cycle and stable DeFi conditions support a constructive outlook. The ongoing post-halving 12-18 month window has historically been the highest-probability bullish period. DeFi TVL at $552B signals strong ecosystem scale and capital presence. Stablecoin lending APYs near 3.7% reflect a healthy, low leverage environment consistent with early-stage leverage demand rather than overheating. The absence of extreme derivatives crowding or liquidations (due to data gaps) does not negate potential sustained positive funding regimes, which historically provide a bullish backdrop. Thus, while short-term signals remain uncertain due to coverage gaps, the fundamental framework supports positioned accumulation ahead of a potential mid-cycle uptrend.",
+        "argument": "Bull Analyst: While the current BTC technical and derivatives data coverage is insufficient for immediate high conviction signals, the prevailing structural dynamics support a cautious bullish stance. The coin remains in the crucial 12-18 month post-halving window historically linked to upward price trends. The DeFi ecosystem\u2019s substantial TVL near $552B along with stable stablecoin lending APYs implies sound and measured leverage demand rather than exuberant overheating. Absence of extreme derivatives crowding and funding rate data is a gap, but partial evidence suggests the market is not in a clear bearish liquidating phase, aligning with a possible positive funding regime. Key near-term risk factors like price falling below 200-day SMA or capital outflows in stablecoins would undermine this view. However, barring these, the structural content favors disciplined accumulation in anticipation of a mid-cycle bullish run. Restoring derivatives and stablecoin inflow data remains critical to upgrading conviction. Absence of extreme funding rate crowding signals may actually imply a healthy, sustainable regime as per Glassnode patterns; lack of data is a limitation but does not indicate bearish positioning.",
+        "confidence": "med",
+        "top_point": "BTC is in the historically high-probability 12-18 month post-halving bullish window, a robust macro positive.",
+        "top_rebuttal": "Absence of extreme funding rate crowding signals may actually imply a healthy, sustainable regime as per Glassnode patterns; lack of data is a limitation but does not indicate bearish positioning.",
         "data_gaps": [
-          "openbb:openbb_not_installed",
-          "coinglass:missing_api_key",
-          "binance:exception:HTTPError"
+          "Derivatives funding rates, open interest flow, and liquidation data",
+          "Stablecoin supply growth and dominance metrics",
+          "User growth and capital concentration data for DeFi protocols",
+          "Technical indicators such as RSI, moving averages, volume"
         ]
       },
       "bear_researcher": {
-        "thesis": "Coverage gaps and event uncertainty limit conviction.",
-        "argument": "Bear Analyst: Coverage gaps and event uncertainty limit conviction. Without derivatives confirmation the move could be fragile.",
-        "confidence": "high",
-        "top_point": "Coverage gaps make the upside thesis unverifiable.",
-        "top_rebuttal": "Without derivatives confirmation the move could be fragile.",
+        "thesis": "BTC\u2019s current setup is characterized by significant data gaps, notably in critical derivatives metrics such as funding rates, open interest, and liquidations, which precludes reliable assessment of market crowding or sustained bullish regimes. The large DeFi TVL figure is nominal and measured only in USD, failing to account for token price fluctuations or true capital at risk, while stablecoin lending APYs are low and declining, suggesting muted leverage and limited proto-bullish demand. The absence of volume and technical confirmation prevents validation of any sustainable breakout, and historical post-halving returns continue to diminish, cautioning against extrapolating past cycle gains. Additionally, the lack of macro and on-chain data limits safe haven or risk-on narratives. These factors, combined with unresolved coverage gaps, favor a defensive stance given elevated risk of a late-cycle fade or protracted sideways trading.",
+        "argument": "Bear Analyst: BTC currently suffers from substantial data blackouts, undermining any confident bullish stance. Key derivatives metrics are missing, preventing robust assessment of funding regimes or crowding that historically precede corrections. While the DeFi ecosystem's nominal TVL suggests scale, its USD measurement and absent user growth mask underlying capital flows and potential weakness in leverage demand, further evidenced by stablecoin APYs declining slightly. Technical data gaps, notably volume and momentum indicators, obscure breakout validation; given crypto's frequent failed breakouts, this is a critical omission. The post-halving historical context, often cited as a macro bullish anchor, is weakened by the shrinking magnitude of vanilla returns over successive cycles. Thus, the current evidence tilts toward caution with elevated risk of a late-cycle fade or rangebound conditions. Only restoration of reliable derivatives data, confirmatory volume spikes on price breakouts, and real capital inflow signals would overturn this bearish base case. While the 12-18 month post-halving window is historically bullish, recent cycles show sharply diminishing returns and no guarantee of repeat magnitude; without confirming technical or derivatives signals, this macro pattern alone is insufficient to justify bullish conviction.",
+        "confidence": "med",
+        "top_point": "Derivatives data absence on funding rates and open interest means any bullish interpretation is unverifiable and market crowding could be hidden.",
+        "top_rebuttal": "While the 12-18 month post-halving window is historically bullish, recent cycles show sharply diminishing returns and no guarantee of repeat magnitude; without confirming technical or derivatives signals, this macro pattern alone is insufficient to justify bullish conviction.",
         "data_gaps": [
-          "openbb:openbb_not_installed",
-          "coinglass:missing_api_key",
-          "binance:exception:HTTPError"
+          "Derivatives market data including funding rates, open interest flows, and liquidations.",
+          "On-chain metrics about user growth, stablecoin supply and dominance, and capital concentration in DeFi.",
+          "Comprehensive volume and technical indicators (RSI, moving averages, volume) for breakout validation.",
+          "Macro correlation trends and fundamental revenue analyses of BTC protocols."
         ]
       },
       "risk_manager": {
-        "summary": "Position sizing should stay conservative until derivatives and DeFi coverage gaps are closed. Current quantitative score is 28 with low confidence, regime=range_bound, mc_tvl_ratio=None, funding=None.",
-        "recommendation": "avoid",
+        "summary": "BTC risk assessment for 2026-04-26 reveals high uncertainty driven by large coverage gaps in critical derivatives data (funding rates, open interest, liquidations) and incomplete technical signals (volume, RSI, moving averages). This severely limits confidence in detecting leverage-induced crowding or liquidation cascade risk, essential in crypto given historical drawdowns and rapid deleveraging risk. DeFi fundamentals show a mature, low-volatility environment but lack user activity and capital flow data to clarify leverage shifts or fragility. Correlation risk remains elevated as altcoins heavily track BTC and macro cross-asset shocks (SPX) remain a tail risk. Single-position risk should strictly adhere to existing sizing rules with volatility scaling due to absent volatility regime indicators. Portfolio drawdown rules mandate review and size reduction if interim losses approach typical -5% and -10% thresholds. Operational risks include inability to verify exchange or protocol-level anomalies due to missing analytics. Cascade risk is elevated given unknown leverage and open interest conditions, plus no data refutation of alignment of multiple negative catalysts. Recommendation is to reduce position size and leverage exposure until derivatives and technical data restore visibility. Key to upgrading outlook are restoration of derivatives metrics showing moderate funding dynamics and open interest without excessive leverage, more granular DeFi user and stablecoin supply data, and confirmation of sustainable volume-backed technical price action. Invalidating the cautious stance would be emergence of large, sustained funding rate spikes or significant derivative liquidations suggesting imminent deleveraging.",
+        "recommendation": "reduce_size",
         "risk_bias": "elevated",
         "cascade_risk_level": "elevated",
-        "aggressive_view": "Aggressive Analyst: Technical momentum and a score of 28 leave room to press for upside if the regime (range_bound) stabilizes. Waiting for every feed to clear can mean missing the move.",
-        "conservative_view": "Conservative Analyst: Coverage gaps and incomplete derivatives visibility dominate the risk picture. Funding=None and gaps=['openbb:openbb_not_installed', 'coinglass:missing_api_key', 'binance:exception:HTTPError'] do not justify leaning in.",
-        "neutral_view": "Neutral Analyst: The aggressive case is directionally understandable, but the conservative case is stronger until confirmation improves. Limited size or avoidance remains the balanced posture."
+        "aggressive_view": "Aggressive Analyst: Despite significant data gaps\u2014missing critical technical indicators (RSI, volume, SMA), derivatives data (funding rates, open interest), and insufficient on-chain signals\u2014the BTC setup warrants pressing risk moderately now rather than excessive caution. The absence of extreme derivatives crowding or liquidation signals arguably reduces immediate systemic risk, while the ongoing 12-18 month post-halving window historically favors accumulation. Waiting for full volume and RSI confirmation risks missed entry points since crypto\u2019s volatility and price asymmetry favor early positioning with measured sizing. Limited confirmation such as stable DeFi TVL near $552B with stablecoin lending APYs around 3.7%, and historical macro cycle context, provide enough foundation to tactically increase exposure while managing risk via tight stops and scaling. Excessive hesitation driven by data absence is a self-imposed latency that can forfeit outsized mid-cycle gains. What would change this aggressive stance is visible sustained price closure below the 200-day SMA on strong volume, restoration of derivatives data showing persistent negative funding or large liquidation cascades, or clear on-chain capital outflows. Until such invalidations emerge, layering risk incrementally on this constructive but data-imperfect setup aligns with alpha-seeking behavior.",
+        "conservative_view": "Conservative Analyst: Given BTC's current data blackout\u2014lacking critical derivatives metrics (funding rates, open interest, liquidations), technical confirmations (volume, RSI, SMA), and comprehensive on-chain user or stablecoin supply data\u2014risk management must prioritize capital preservation. The nominal $552B DeFi TVL in USD terms does not reveal real capital quality or inflows and paired with declining stablecoin lending APYs suggests subdued leverage demand and limited bullish conviction. Absent derivatives data obscures crowding, leverage, and liquidation risk, making unknown systemic fragility a material threat. Technical indicators vital to confirming breakouts and regime shifts are missing; given crypto\u2019s high failure rate of breakouts without volume confirmation, this raises the likelihood of false signals. Furthermore, post-halving diminishing returns caution against over-reliance on historical bullish cycles without confirming present data. The fragile structure and severe coverage gaps amplify tail risk of sharp drawdowns or prolonged sideways movement. The prudent stance is to limit or avoid fresh BTC exposure until derivative metrics and technical confirmations return. A strict stop-loss regime keyed to 200-day SMA breaches on strong volume is essential. This conservative posture maximizes capital preservation amid structural uncertainty and incomplete data. Conviction would improve only with restored derivatives signals showing stable positive funding and open interest indicating genuine trend participation, volume-backed technical breakouts, and evidence of stablecoin capital inflows supporting leverage expansion. Until such data is available, restraint is warranted.",
+        "neutral_view": "Neutral Analyst: Given the pronounced data gaps across critical BTC technical indicators (RSI, volume, SMA), derivatives metrics (funding rates, open interest, liquidations), and on-chain capital flows, a balanced stance favors disciplined caution over aggressive positioning in the coming week. The bull case leans on the historically supportive 12-18 month post-halving window, stable DeFi TVL (~$552B), and moderate stablecoin lending APYs (~3.7%) implying subdued but steady ecosystem engagement. However, the bear case rightly highlights that missing derivatives data obscures leverage, crowding, and liquidation risk, while absent volume and price trend confirmations limit breakout reliability. Without firm confirmation, reliance on nominal DeFi TVL and macro cycle alone risks overextension. The prudent approach is to maintain low exposure, apply strict risk controls keyed to strong volume-confirmed price support levels (notably the 200-day SMA), and await restoration of derivatives and technical data to reassess trend conviction. Key invalidation triggers include sustained BTC closes below 200-day SMA on heavy volumes, negative derivatives funding signals if restored, and meaningful DeFi capital outflows. This neutral posture manages latent risk under uncertainty while preserving optionality for a mid-cycle bullish acceleration should data improve. Confidence remains low due to data gaps."
       }
     }
   },
@@ -288,4 +295,5 @@ Return only a compact JSON object.
     "scorecard"
   ]
 }
-- fallback_reason: deterministic_provider
+## Referenced Fields
+- report: The integrated crypto read stays avoid: score=28, regime=range_bound, MC/TVL=None, funding=None. The system sees enough fragility to stay conservative rather than press for directional size.
