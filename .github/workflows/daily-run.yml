@@ -1,0 +1,121 @@
+name: Daily Run
+
+on:
+  schedule:
+    # 14:00 UTC = 22:00 Beijing
+    - cron: '0 14 * * *'
+  workflow_dispatch:
+    inputs:
+      asset:
+        description: 'Asset symbol to research'
+        required: false
+        default: 'BTC'
+      horizon_days:
+        description: 'Horizon in days'
+        required: false
+        default: '7'
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+
+    env:
+      ASSET: ${{ github.event.inputs.asset || 'BTC' }}
+      HORIZON: ${{ github.event.inputs.horizon_days || '7' }}
+      CRYPTO_RESEARCH_ANALYSIS_PROVIDER: openai
+      ANALYSIS_API_KEY: ${{ secrets.ANALYSIS_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.ANALYSIS_API_KEY }}
+      ANALYSIS_MODEL: gpt-4.1-mini
+      ANALYSIS_API_BASE_URL: https://api.openai.com/v1
+      ODR_LOCAL_PROJECT_ROOT: ${{ github.workspace }}/external/open_deep_research
+      ODR_SEARCH_API: openai
+      ODR_RESEARCH_MODEL: openai:gpt-4.1-mini
+      ODR_SUMMARIZATION_MODEL: openai:gpt-4.1-mini
+      ODR_COMPRESSION_MODEL: openai:gpt-4.1-mini
+      ODR_FINAL_REPORT_MODEL: openai:gpt-4.1-mini
+      ODR_MAX_CONCURRENT_RESEARCH_UNITS: '1'
+      ODR_MAX_RESEARCHER_ITERATIONS: '1'
+      ODR_MAX_REACT_TOOL_CALLS: '1'
+      ODR_TIMEOUT_SECONDS: '180'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Create virtualenv and install
+        run: |
+          uv venv
+          uv pip install --python .venv/bin/python -e ".[dev]"
+
+      - name: Run preflight
+        run: .venv/bin/python -m crypto_research_agent.cli preflight
+
+      - name: Run daily research
+        id: run_research
+        run: |
+          DATE=$(date -u +%Y-%m-%d)
+          OUT_DIR="daily_runs/${DATE}"
+          mkdir -p "${OUT_DIR}"
+          echo "DATE=${DATE}" >> $GITHUB_ENV
+          echo "OUT_DIR=${OUT_DIR}" >> $GITHUB_ENV
+          .venv/bin/python -m crypto_research_agent.cli run \
+            --asset "${ASSET}" \
+            --horizon-days "${HORIZON}" \
+            --thesis "Automated daily research for ${ASSET} on ${DATE}" \
+            --output-dir "${OUT_DIR}"
+
+      - name: Curate artifacts (keep card + summary, drop heavy traces)
+        run: |
+          # Keep only the research card and feature summary in the committed copy
+          # Full agent traces stay in the workflow artifacts only
+          CURATED="docs/daily/${DATE}"
+          mkdir -p "${CURATED}"
+          # Copy research card
+          find "${OUT_DIR}/research_cards" -name "*.md" -exec cp {} "${CURATED}/${ASSET}_card.md" \;
+          # Copy feature summary
+          find "${OUT_DIR}/runs" -name "summary.json" -path "*/features/*" -exec cp {} "${CURATED}/${ASSET}_features.json" \;
+          # Copy final arbiter output
+          find "${OUT_DIR}/runs" -name "final_arbiter.md" -exec cp {} "${CURATED}/${ASSET}_arbiter.md" \;
+          ls -la "${CURATED}"
+
+      - name: Update README last-run badge
+        run: |
+          ARBITER=$(find "${OUT_DIR}/runs" -name "final_arbiter.json" | head -1)
+          export ARBITER_PATH="${ARBITER}"
+          export README_DATE="${DATE}"
+          export README_ASSET="${ASSET}"
+          export README_HORIZON="${HORIZON}"
+          python3 .github/scripts/update_readme_badge.py
+
+      - name: Commit and push curated outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/daily/ README.md
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "daily: ${ASSET} ${DATE}"
+            git push
+          fi
+
+      - name: Upload full run as workflow artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-run-${{ env.DATE }}-${{ env.ASSET }}
+          path: ${{ env.OUT_DIR }}
+          retention-days: 30

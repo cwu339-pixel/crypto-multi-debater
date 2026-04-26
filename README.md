@@ -12,6 +12,8 @@
 
 </div>
 
+<!-- LAST_RUN --> _Last automated run: **2026-04-26**_ · **BTC 7d** → `avoid` · pos: `none` · flip ↑: 5+ consecutive daily closes above 200-SMA with rising MACD and stable… · flip ↓: Daily close below SMA50 on expanding down-volume with MACD turning ne… · [card](docs/daily/2026-04-26/BTC_card.md) · [ruling](docs/daily/2026-04-26/BTC_arbiter.md)
+
 ---
 
 <div align="center">
@@ -152,6 +154,18 @@ Using a generic framework would have shipped faster. It also would have produced
 ### Cost And Runtime
 
 A single full run issues **~8 LLM calls** (4 analysts + bull + bear + risk + arbiter), totalling roughly **~2 minutes of LLM wall-time** on the showcase BTC case (see `showcase/runs/r_20260422T063929Z_BTC/agents/call_log.jsonl`). End-to-end cost is in the **~$0.10-0.50 per run** range depending on model tier (mini-class models land near the low end). The system is designed to be inspected run-by-run, not to be spammed at high frequency.
+
+## Design Philosophy: Conservative By Construction
+
+This system is deliberately **biased toward not entering the market**. The score-to-decision threshold (`score >= 55 → hold`, otherwise `avoid`) and the final arbiter's deference to invalidation conditions both reflect a single principle: **the cost of being wrong on entry is higher than the cost of missing a rally.**
+
+What this means in practice, observed across April 2026 runs:
+
+- BTC traded from ~$67K to ~$78K (+15%) over the period. The system stayed on `avoid` or `hold/quarter` throughout — it sat out most of the move.
+- That is not a bug to fix; it is the system functioning as designed. A risk-first courtroom does not chase momentum.
+- The portfolio value of this repo is the **legibility of the reasoning**, not the directional accuracy. Every `avoid` ships with the explicit `flip_rules` that would change the verdict — so the system can be argued with on its own terms.
+
+If you are looking for a momentum-chasing trading bot, this is not it. If you are looking for a research harness that forces you to defend every entry against a structured bear case, that is the design.
 
 ## Repo Boundaries
 
