@@ -12,7 +12,7 @@
 
 </div>
 
-<!-- LAST_RUN --> _Last automated run: **2026-04-26**_ · **BTC 7d** → `avoid` · pos: `none` · flip ↑: BTC sustains 5 consecutive daily closes above 200-day SMA on rising v… · flip ↓: BTC closes below 200-day SMA on heavy volume (>1.5x avg) and derivati… · [card](docs/daily/2026-04-26/BTC_card.md) · [ruling](docs/daily/2026-04-26/BTC_arbiter.md)
+<!-- LAST_RUN --> _Last automated run: **2026-04-27**_ · **BTC 7d** → `avoid` · pos: `none` · flip ↑: Sustained funding rate normalization with funding z-score < +2, volum… · flip ↓: n/a · [card](docs/daily/2026-04-27/BTC_card.md) · [ruling](docs/daily/2026-04-27/BTC_arbiter.md)
 
 ---
 
