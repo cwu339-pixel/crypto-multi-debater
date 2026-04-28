@@ -1,9 +1,11 @@
 name: Daily Run
 
 on:
-  schedule:
-    # 14:00 UTC = 22:00 Beijing
-    - cron: '0 14 * * *'
+  # Schedule disabled — daily run now driven by macOS launchd on the local
+  # workstation (see run_daily.sh). GitHub-hosted runners are blocked from
+  # binance.com (US IP), which produced degraded data.
+  # schedule:
+  #   - cron: '0 14 * * *'
   workflow_dispatch:
     inputs:
       asset:

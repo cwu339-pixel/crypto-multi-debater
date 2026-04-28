@@ -20,3 +20,5 @@ research_cards/*
 reviews/*
 !reviews/.gitkeep
 .env
+cast.txt
+daily_runs/
