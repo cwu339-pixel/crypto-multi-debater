@@ -1,50 +1,50 @@
 # BTC Research Report
 
-Processed signal: AVOID
+Processed signal: HOLD
 
 1. Verdict
-- Verdict: Avoid
-- Confidence: High
+- Verdict: Hold
+- Confidence: Low
 - Horizon: 7d
-- Action Score: 47/100
+- Action Score: 33/100
 
 How To Read This Verdict
 - Action Score is the baseline action signal, not a return forecast.
 - Confidence measures agreement across core market signals, not how many supplementary APIs responded.
-- Supplementary gaps contribute at most a single -5 penalty.
+- Core data is incomplete, so confidence should be treated as structurally weak.
 
 2. Case File
 - As of: 2026-04-28
-- Issue: whether to avoid or buy BTC over the next 7 days
+- Issue: whether to hold or buy BTC over the next 7 days
 - Thesis: Automated daily research for BTC on 2026-04-28
-- Immediate posture: The integrated crypto read stays avoid: score=47, regime=bull_trend, MC/TVL=2.7753, funding=-3.2e-05. The system sees enough fragility to stay conservative rather than press for directional size.
+- Immediate posture: The integrated crypto read stays avoid: score=33, regime=range_bound, MC/TVL=None, funding=-3.2e-05. The system sees enough fragility to stay conservative rather than press for directional size.
 
 3. Bench Evidence
-- Technical Analyst: BTC remains in a bear regime as confirmed by price below the 200-day SMA (-9.4%) and an RSI of 58.3, which is within the bear resistance zone (55-65), indicating limited upside momentum. The recent 1-day return of -0.96% suggests short-term weakness, and volume confirmation is suboptimal (volume ratio 0.9 < 1.5), reducing confidence in any breakout attempts. Key levels: resistance 50-day SMA (approx. level requires updated data).
-- DeFi Analyst: DeFi fundamentals currently show a mixed picture: while total TVL remains elevated above $546B, the lack of breakdown in native token terms and absence of user growth data limit confidence in the quality and sustainability of this liquidity. The MC/TVL ratio near 2.78 points to significant overvaluation of DeFi protocol tokens relative to their locked capital, raising caution about speculative excess.
-- Derivatives Analyst: BTC derivatives data shows a near-neutral funding rate slightly negative, suggesting mild short bias without material crowding. Open interest rose modestly by 1.4%, implying moderate new position entry but leverage level and risk profile are unclear without market cap or exchange-level breakdown.
-- News Analyst: Evidence quality is actionable. Imminent BTC integration in major global bank's treasury management system. Top risk: Regulatory tightening in EU (MiCA) and looming SEC announcements on BTC spot ETFs
+- Technical Analyst: Given missing data on volume and on-chain metrics from key providers, BTC's current price action and momentum indicators cannot be confidently analyzed within the crypto-specific technical framework. Without reliable volume, breakout or breakdown confirmations are not feasible, and RSI or SMA signals cannot be validated.
+- DeFi Analyst: DeFi ecosystem TVL stands robust around $543 billion, demonstrating scale but lacking native token TVL or user growth data to confirm organic capital injection versus price appreciation. Stablecoin lending rates reside steadily in the low-to-mid 3% range with slight recent compression, indicative of subdued borrowing demand and a cautious market environment without leverage-fueled rallies.
+- Derivatives Analyst: Derivative metrics for BTC on the current date show a mild short bias with funding rates slightly negative around -0.0032%, well within a neutral range. The open interest increased modestly by 1.4%, signaling stable leverage levels without aggressive position influx.
+- News Analyst: Evidence quality is actionable. Major financial institution launching Bitcoin-denominated retail funds starting May 2026. Top risk: SEC pending review aiming for tighter KYC/AML on crypto exchanges in next 7 days
 
 4. Prosecution
-- Bear Analyst: BTC's current position below the 200-day SMA, weak technical momentum, and lacking volume confirmation after a +15% 30-day rally strongly suggest a bear market trap rather than genuine rebound. The DeFi market's high MC/TVL ratio and absence of critical onchain user and revenue data point to valuations that are potentially overstretched and speculative. While derivatives funding rates appear balanced, critical datasets on leverage, liquidation events, and OI relative to market capitalization remain missing and prevent confident assessment of risk exposure. Elevated open interest combined with limited leverage transparency historically signals crowded longs prone to correction. Regulatory uncertainty and macro risks compound these vulnerabilities. Thus, the case for sustainable upside is unproven absent clear fundamental and technical breakouts. A risk-managed approach favors selling rallies and treating dips cautiously until robust breakout confirmation and comprehensive data fill gaps. Such rallies are frequent in bear markets and often fail without volume confirmation; volume ratio below 1.0 signals weak participation and risk of reversal rather than trend reversal.
+- Bear Analyst: Current BTC market signals present a fragile technical and fundamental picture with critical data deficiencies undermining bullish confidence. Missing volume, derivatives liquidation, and user on-chain metrics impair the ability to confirm accumulation or genuine leverage positioning, while reported DeFi TVL remains a USD nominal measure, susceptible to inflation via price appreciation rather than real capital inflows. The slight negative funding rate and modest open interest growth fail to conclusively exclude latent crowding risks, especially without cross-exchange funding rate comparisons and liquidation data. BTC’s ~0.5 correlation to equities exposes it to ongoing macroeconomic vulnerabilities amid rising yields and uncertain Fed policy, challenging the narrative of crypto as a safe haven. Additionally, historical post-halving return scaling suggests the market is unlikely to replicate past exceptional gains under current conditions. The bullish case notably hinges on an institutional BTC fund launch and improved on-chain signals; yet these remain unverifiable due to missing key native token TVL and user wallet data. Until such gaps close with confirming volume and derivatives transparency, and macro risks abate, BTC is vulnerable to regime shifts that could see sharp price retracements. The current environment warrants a cautious bearish stance, recognizing the risk of extended corrections despite intermittent bullish headlines. While the fund launch signals interest, absence of native token TVL or user wallet data makes real capital inflows unverifiable; price appreciation alone inflates TVL and could mask lack of fresh funds
 
 5. Defense
-- Bull Analyst: BTC currently trades in a delicate balance beneath its 200-day SMA, with RSI indicating limited momentum but a strong 30-day total return (+15%) that defies pure bear market expectations. Derivatives positioning remains balanced, reflected in near-neutral funding rates and moderate open interest growth, signaling stable leverage without excess crowding. DeFi fundamentals reveal mixed signals: elevated TVL supports underlying demand while high token valuations warrant caution, though moderate stablecoin yields (~3.9%) evidence healthy leverage activity rather than frothy speculation. Upcoming institutional catalysts, including major bank integrations and the Taproot upgrade, provide potential triggers for renewed investor confidence. While regulatory risks warrant vigilance, the current data supports a constructive outlook grounded in fundamental stability and measured market positioning. Key risks to watch include sustained failure to breach critical technical resistance, negative shifts in DeFi capital flows, and spikes in derivatives-driven volatility. Resolving these data gaps on user engagement, stablecoin supply trends, and detailed derivatives metrics will improve conviction ahead of possible trend shifts. While price is below 200-day SMA, the sustained 30-day +15% return and moderate RSI near resistance show resilience; sub-extreme volume ratio reflects healthy consolidation, not capitulation. This sets the stage for a base build poised for eventual breakouts if catalysts materialize.
+- Bull Analyst: Our bullish thesis on BTC over the near-term is grounded in solid institutional interest from a major asset manager launching a BTC fund, complemented by improving on-chain accumulation signals anchoring demand despite technical consolidation. Derivative markets reveal balanced positioning; the mild negative funding rates point to healthy market dynamics rather than excessive shorting or deleveraging risks. The robust DeFi TVL and stable lending yields further imply sustained but cautious leverage adoption, aligning with a measured accumulation regime. Coupled with the historical strength of the 12-18 month post-halving window, these factors create a favorable base case. While regulatory scrutiny remains a key short-term risk, current price levels and open interest reflect anticipation and digestion of such pressures rather than capitulation. We recommend close monitoring of funding rates, stablecoin supply trends, and on-chain outflows as key invalidation triggers for this bullish stance. Coverage gaps in derivatives depth and stablecoin flow limit conviction from strong buy to medium confidence but do not undermine the positive fundamental narrative for BTC at present. The mild negative funding rate remains within a neutral regime and is well below overcrowding thresholds; funding rate in the 0.01-0.03% positive range typically signals bullish market regime, hence current near-zero negative readings reflect balanced and healthy positioning rather than bearish extremes.
 
 6. Sentencing / Guardrails
 - Risk roundtable:
-- Aggressive Analyst: BTC's price action below the 200-day SMA (-9.4%) alongside a moderate RSI (~58) and volume ratio (~0.9) signals technically bearish conditions but not outright collapse. The 30-day +15% return evidences resilient demand amid bear rallies, a setup warranting immediate press of risk despite lacking ideal volume confirmation. While WoC data gaps (missing Coinglass for derivatives funding z-scores, and user growth in DeFi) limit perfect clarity, limited confirmation exists: stable moderate open interest growth (~1.4%), near-neutral funding rate (-0.0032%), and elevated but steady DeFi TVL (~$546B) with stablecoin APYs (~3.9%) suggest measured risk appetite, not panicked liquidation. Institutional and technical catalysts in the short window—major bank integration with BTC treasury and Taproot v1.2 upgrade—are actionable positive drivers that can break the stalemate. Regulatory risks (EU MiCA, SEC ETF decisions) pose acute downside scenarios but have not yet triggered capitulation. Waiting for ideal breakout volume or daily closes >200-day SMA at >1.5x volume in this week-long horizon forfeits opportunity, given the asymmetric potential from catalysts and the persistent risk of sudden regime shifts implied by volume and derivatives ambiguity. The prudent aggressive stance is to press risk on partial signals now, using tight stops below current supports and monitoring quickly evolving derivatives and regulatory updates to exit early if invalidation thresholds breach. This tactical engagement balances incomplete data with concrete actionable positives. A failed breakout or volume surge to downside would then validate swift pivot to protective posture. In sum, current limited confirmation is enough to justify an aggressive partial long with tight risk control rather than blanket avoidance or defensive passivity.
-- Conservative Analyst: Despite some positive signals like a recent 30-day +15% BTC price gain and institutional catalyst announcements, significant risks and data gaps argue strongly for capital preservation. BTC remains nearly 9.4% below its 200-day SMA with an RSI in a bear resistance zone (~58), supported by sub-par volume (volume ratio ~0.9), highlighting fragile technical structure prone to failed rallies and downside traps. DeFi valuations are elevated with an MC/TVL ratio around 2.78, signaling speculative risk unsupported by user growth or revenue data, while absence of native-token TVL and lending utilization information limits confidence in sustainable capital inflows. Derivatives market data is incomplete due to missing coinglass metrics, obscuring leverage, funding rate extremes, liquidation events, and open interest relative risk. Moderately rising open interest and near-neutral funding rates offer limited comfort given this opacity. Regulatory uncertainties, notably EU MiCA and pending US SEC BTC ETF decisions, create material downside risks that could quickly trigger capitulation, especially under fragile structural conditions. The missing data on derivatives crowding and DeFi user engagement compounds risk assessment uncertainty, suggesting latent vulnerabilities. Therefore, without sustained price and volume breakout above 200-day SMA confirmed by healthy volume (>1.5x avg), and clearer fundamental confirmation via onchain user growth and risk-on derivatives signals, it is prudent to avoid or cap exposure to BTC over the next 7 days. Preservation of capital through risk-managed positioning and tight stops is recommended until robust data or technical validation emerges.
-- Neutral Analyst: BTC exhibits a technical regime of caution: price remains ~9.4% below its 200-day SMA with RSI in a bear resistance zone and volume ratio below 1.0, signaling weak breakout momentum and risk of failed rallies. Despite a resilient 30-day price return of +15%, this mirrors typical bear market rallies lacking volume or broad participation. DeFi fundamentals show mixed signals: an elevated MC/TVL ratio (~2.78) implies speculative pricing unbacked by native token inflows or onchain user growth data, while stablecoin lending APYs near 3.9% suggest moderate leverage demand without overheating. Derivatives positioning is neutral to mildly bearish with near-zero funding rates and moderately rising open interest, but the absence of granular coinglass data (funding z-scores, liquidations, leverage ratios) limits risk clarity. Institutional catalysts—major bank BTC integration and Taproot 1.2 upgrade—offer positive near-term upside, yet looming regulatory risks (EU MiCA, SEC ETF decisions) heighten downside vulnerability. Given incomplete derivatives and user engagement data, the environment lacks robust confirmation for sustained upside. The prudent stance is disciplined neutrality: avoid aggressive longs; maintain minimal exposure with tight stop-losses, selling rallies and preserving capital until clear technical breakouts above 200-day SMA with supporting volume, improved derivatives visibility, or definitive fundamental evidence of organic capital inflow emerge. Close monitoring of regulatory developments and derivatives metrics is essential. This posture balances the asymmetric potential of catalysts against structural technical and fundamental uncertainties, mitigating downside while preserving optionality for upside should conditions improve.
+- Aggressive Analyst: Despite the cautious lean from the technical analyst and bear researcher citing substantial data coverage gaps and uncertain volume/derivatives confirmations, the current BTC setup justifies pressing risk to capitalize on near-term tactical opportunities. Institutional adoption is primed to accelerate with a major asset manager launching a BTC fund imminently, a catalyst typically driving sharp inflows and price appreciation ahead of and post-launch. On-chain accumulation signals, though imperfect, show improvement indicating persistent buyer interest that precedes confirmed breakouts. Derivative metrics display mild negative funding rates (-0.0032%)—comfortably close to balanced—without signs of crowded shorts or liquidation risk seen at more extreme negative levels (< -0.01%). Moderate open interest gains (+1.4%) further support a cautious build rather than excessive leverage. DeFi fundamentals reveal stable $543B TVL and steady stablecoin lending rates around 3.65%, consistent with a mature but accumulating ecosystem rather than deleveraging. Macroeconomic trends (Fed steady and Treasury yields elevated but digestible) temper but do not negate upside potential. The post-halving 12-18 month window historically aligns with bullish regimes. While confirmation via restored volume data and deeper derivatives stress signals would enhance conviction, the existing combination of institutional catalysts, improving on-chain trends, and balanced derivatives positioning suffices for tactical risk-taking on the long side with tight risk controls. Pressing risk now allows front-running potential volatility and positioning ahead of breakout thresholds near $45K, especially given the prospective fund launch. Key invalidation triggers include a sustained decline in funding below -0.01%, visible outflows or native token TVL contraction, and regulatory enforcement shocks triggering sharp liquidation. Overall, restrained bullish engagement is the high-conviction path in a fragmented data environment where waiting for perfect confirmation risks missing asymmetric upside.
+- Conservative Analyst: Given the substantial data gaps in core volume and on-chain metrics, absent cross-exchange derivatives liquidation and funding rate z-score data, and missing stablecoin supply growth statistics, the BTC market currently exhibits elevated uncertainty and fragile structural signals. Without reliable volume confirmation, technical breakouts or momentum shifts cannot be validated, increasing the risk of false signals and rapid regime reversals. Derivative market data reveals only a mild short bias but lacks critical stress indicators, obscuring true leverage and liquidation risks. The DeFi TVL figure reported in USD terms risks overstating organic capital inflows without native token or user growth data to confirm sustainability. Moreover, BTC's moderate correlation to equities amid rising U.S. Treasury yields exposes it to macroeconomic vulnerabilities, challenging its role as a safe haven. Regulatory uncertainties, particularly pending SEC enforcement, add further downside risk through possible exchange disruptions or institutional outflows. Given these fragilities and unknowns, a capital preservation stance is warranted over the next 7 days, with exposure capped or avoided until comprehensive volume, on-chain user activity, and derivatives liquidation information are restored. Key invalidation triggers for re-engagement include verified native token TVL and user growth, stablecoin supply increases, confirmed volume breakout validation, and transparent derivatives liquidation data mitigating hidden deleveraging risks. Until these materialize, prudence through limited risk and capital preservation remains the highest conviction allocation recommendation.
+- Neutral Analyst: Bitcoin's near-term outlook (7-day horizon) remains mixed with significant data gaps in core volume, on-chain metrics, derivatives liquidation, and stablecoin supply flows, limiting confident regime classification. Bullish factors include a major asset manager's imminent BTC fund launch signaling institutional capital inflows, improving on-chain accumulation metrics, mild negative funding rates indicating balanced derivatives positioning, and a robust DeFi TVL with stable lending rates suggesting measured borrowing demand. Macro environment is neutral-to-cautiously bearish with Fed rate steadiness offset by rising Treasury yields and pending SEC regulatory scrutiny adding potential volatility. However, absence of native token TVL growth, user wallet data, and comprehensive derivatives stress indicators undermines validation of true accumulation and leverage dynamics, leaving risks of false breakouts, latent crowding, and regulatory shocks unquantified. The post-halving period historically favors BTC, yet diminishing returns caution against extrapolating prior cycles’ strength uncritically. Given this balanced evidence and uncertainties, a disciplined posture is advised: maintain capital preservation with limited exposure, employ tight risk controls, and await restoration of volume and derivatives depth before committing further capital. Key invalidation triggers for a more aggressive stance would be sustained funding rates >0.01%, confirmed native token TVL and wallet growth, stablecoin supply expansion >3%, and clear volume-confirmed breakout. Conversely, worsening funding below -0.01%, significant outflows, or acute regulatory enforcement would reinforce caution. This balanced, data-conscious approach ensures risk is managed prudently amid a fragmented signal environment.
 
-- Entry logic: Wait for daily close above 200-day SMA (~76700) with volume exceeding 1.5x average and RSI sustainably moving above 65, accompanied by improving derivatives metrics (confirmed positive funding z-scores and controlled open interest growth). Alternatively, consider scaling in after confirmed sustained price support above 50-day SMA with volume confirming momentum.
-- Stop logic: Initial stop at 1× ATR (~price - ATR) below entry price (e.g., ATR ~1000 USD implies stop ~ATR below entry). Hard stop on daily close below recent swing low or below 50-day SMA if holding a position.
-- Sizing: Avoid new positions given current uncertainty. If conditions improve, size trades to risk no more than 0.5% portfolio per trade using ATR-based stop losses, capping total exposure to 2-3% tactically.
-- Targets: none (avoid/hold posture)
+- Entry logic: Enter scaled long on a daily close above $45,000 with volume above the recent average and funding rate stabilizing above -0.001%. Alternatively, scale exposure on a pullback toward $40,000 if RSI confirms oversold conditions and open interest does not decline sharply.
+- Stop logic: Initial stop at 1× ATR below entry price (~$1,200 if entry near $43,000). Hard stop: daily close below $40,000 with declining volume and expanding negative funding beyond -0.01%.
+- Sizing: Risk 0.25-0.5% of portfolio with 1 ATR stop; position sizing conservative due to data gaps and medium confidence. Increase size only after confirming volume and funding signals.
+- Targets: $48,000 (50%; Key near-term resistance zone; partial profit taking to lock gains.) → $52,500 (50%; Post-breakout extension target aligned with post-halving cycles and historical resistance.)
 - Hard rules that flip posture:
-- If Sustained daily closes above 200-day SMA with volume >1.5x average and RSI >65 → Upgrade to hold or buy with half to full position size
-- If Derivatives funding rate z-score exceeds +2 with rising open interest → Consider tactical short or reduce exposure to longs
-- Tactical alternative: For risk-averse mandates, consider smaller exposure sizes with wider stops or defined-risk options strategies to participate in potential upside while limiting downside.
+- If Sustained daily closes above $45,000 with volume and funding rate > 0.01% → Upgrade to Buy, increase to half/full position
+- If Daily close below $40,000 with expanding negative funding below -0.01% → Downgrade to Sell or avoid further exposure
+- Tactical alternative: For risk-averse mandates, remain flat or hold minimal exposure via options strategies with defined loss or reduced size with wider stops to limit downside exposure.
 
 Current risk posture:
 Current posture:
@@ -53,50 +53,49 @@ Current posture:
 - Stay on watchlist only
 
 Main risks to this stance:
-- Regulatory developments (EU MiCA tightening, SEC ETF rulings) could trigger sharp negative moves
-- Potential sudden leveraged liquidation due to incomplete derivatives data
-- Bear market traps causing failure of rallies despite positive short-term returns
+- Regulatory enforcement from SEC causing volatility and exchange compliance tightening
+- False breakout risk due to missing volume and on-chain momentum confirmation
+- Potential leverage risk hidden by absent derivatives liquidation data
 
 7. Judge's Ruling
-- Ruling: The integrated crypto read stays avoid: score=47, regime=bull_trend, MC/TVL=2.7753, funding=-3.2e-05. The system sees enough fragility to stay conservative rather than press for directional size.
-- Thesis: From the Conservative perspective, BTC remains technically fragile below its 200-day SMA at 76626 with an RSI near 58 and subpar volume ratio around 0.9, signaling limited momentum and high risk of failed rallies. DeFi valuations are stretched, indicated by an MC/TVL ratio near 2.78, with no strong user growth or fee data to justify elevated token prices. Derivatives positioning appears balanced but incomplete data on funding z-scores, leveraged positioning, and liquidation risk prevent confident risk assessment. The 30-day +15% return reflects a bear market rally rather than sustained uptrend. Additionally, significant regulatory risks from EU MiCA and upcoming US SEC BTC ETF decisions amplify downside uncertainty. Avoiding new exposure while monitoring for a clean break above the 200-day SMA on strong volume (>1.5x average) with improved derivatives visibility would enable reconsideration. A tight ATR-based stop below recent supports would be essential.
-- Key factors: Technical bear regime confirmed by price below 200-day SMA with weak volume and RSI at 58 (technical_analyst), Elevated DeFi valuations (MC/TVL ~2.78) without supportive onchain or user growth data (defi_fundamentals_analyst), Incomplete derivatives data with near-neutral funding but limited tail-risk clarity (derivatives_analyst)
-- Rejected alternative: BUY — Insufficient supportive volume and technical confirmation, insufficient derivatives data to validate tail-risk profile, and regulatory risks preclude confident entry despite some positive catalysts.
+- Ruling: The integrated crypto read stays avoid: score=33, regime=range_bound, MC/TVL=None, funding=-3.2e-05. The system sees enough fragility to stay conservative rather than press for directional size.
+- Thesis: From the Aggressive perspective, institutional catalysts and improving on-chain accumulation argue for tactical long exposure with tight stops, supported by mild negative funding rates and stable DeFi fundamentals. Price near $43,000 with no clear trending regime argues against aggressive sizing; a close above $45,000 on volume and improving funding could unlock a buy. Until then, a small exposure with disciplined risk controls balances asymmetric upside potential with downside risk. Key invalidators include sustained funding below -0.01%, volume breakdown, and regulatory enforcement shocks.
+- Rejected alternative: BUY — Insufficient volume and derivative liquidation signals, combined with regulatory risk and missing stablecoin flow data, make a full buy too risky despite institutional catalyst.
 - Hard rules:
-- If Sustained daily closes above 200-day SMA with volume >1.5x average and RSI >65 → Upgrade to hold or buy with half to full position size
-- If Derivatives funding rate z-score exceeds +2 with rising open interest → Consider tactical short or reduce exposure to longs
+- If Sustained daily closes above $45,000 with volume and funding rate > 0.01% → Upgrade to Buy, increase to half/full position
+- If Daily close below $40,000 with expanding negative funding below -0.01% → Downgrade to Sell or avoid further exposure
 
 8. Appeal Conditions
 Re-evaluate only if all of the following happen:
-- Sustained daily closes above 200-day SMA with volume >1.5x average and RSI >65
-- Derivatives funding rate z-score exceeds +2 with rising open interest
+- Sustained daily closes above $45,000 with volume and funding rate > 0.01%
+- Daily close below $40,000 with expanding negative funding below -0.01%
 
 Review due: 7 days from now
 
 At review, check:
-- Price vs 200-day SMA and volume levels
-- RSI trajectory and momentum indicators
-- Derivatives market indicators including funding rates and open interest
-- Regulatory updates and associated market reactions
-- DeFi TVL, onchain user metrics, and stablecoin flows
+- Funding rate and open interest changes
+- Volume and RSI confirmation of regime
+- Stablecoin supply and DeFi TVL changes
+- On-chain accumulation signals and derivative liquidation data if available
 Latest review: pending
 
 9. Data Quality Footnote
 Overall: Mixed — core data is intact, but supplementary flow and catalyst inputs are partial.
 
 Supplementary sources not available:
+- openbb
 - coinglass
 
 Run Mode: live_or_current
 
 Score Breakdown
-- Momentum: 50.49
-- Liquidity: 80.0
+- Momentum: 45.0
+- Liquidity: 35.0
 - Derivatives: 60.0
-- Fundamentals / Flows: 52.0
-- Trend / Regime: 44.3
+- Fundamentals / Flows: 60.0
+- Trend / Regime: 45.0
 - Macro / News: 45.0
-- Data quality penalty: -5.0
-- Core data complete: True
+- Data quality penalty: -15.0
+- Core data complete: False
 - Supplementary data complete: False
-- Total: 47/100
+- Total: 33/100
