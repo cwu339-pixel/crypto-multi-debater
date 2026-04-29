@@ -1,0 +1,19 @@
+{
+  "asset": "BTC",
+  "feature_status": "partial",
+  "defi_tvl_total": 548774370654.02,
+  "defi_stablecoin_median_apy": 3.65,
+  "defi_stablecoin_tvl_weighted_apy": 3.8861,
+  "defi_stablecoin_apy_change_7d": -0.1792,
+  "deriv_funding_latest": -2.8e-05,
+  "derivatives_funding_rate_latest": -2.8e-05,
+  "deriv_funding_7d_ma": -3e-05,
+  "deriv_funding_zscore_30d": -0.2023,
+  "deriv_funding_crowding": "neutral",
+  "deriv_oi_latest": 97638.28,
+  "derivatives_open_interest_latest": 97638.28,
+  "deriv_oi_change_1d_pct": 0.0809,
+  "derivatives_open_interest_change_pct": 0.0809,
+  "deriv_oi_change_7d_pct": -5.9973,
+  "deriv_oi_at_30d_high": false
+}
