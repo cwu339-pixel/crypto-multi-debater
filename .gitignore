@@ -22,3 +22,6 @@ reviews/*
 .env
 cast.txt
 daily_runs/
+
+# Local-only LinkedIn marketing assets (83MB of PNGs, not for the repo)
+showcase/linkedin/
