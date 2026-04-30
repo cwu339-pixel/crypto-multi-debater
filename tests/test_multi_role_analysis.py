@@ -3,6 +3,7 @@ from typing import Any
 from datetime import datetime, timezone
 from pathlib import Path
 
+from crypto_research_agent.agents import runner as runner_module
 from crypto_research_agent.agents.runner import (
     FIRST_ORDER_ROLES,
     ROLE_ORDER,
@@ -202,7 +203,7 @@ def test_run_multi_role_analysis_uses_prompt_provider_for_debate_roles_and_risk_
     assert final_arbiter["report"].startswith("final_arbiter narrative report")
     assert final_arbiter["decision"]["action"] in {"hold", "avoid"}
     assert "\"prompt_text\"" not in final_arbiter["prompt_text"]
-    assert final_arbiter["scorecard"]["final_score"] == 54
+    assert final_arbiter["scorecard"]["final_score"] == 57
     assert final_arbiter["scorecard"]["confidence"] == "medium"
     assert "final_score" in final_arbiter["prompt_text"]
     assert "score_decision" in final_arbiter["prompt_text"]
@@ -353,6 +354,36 @@ def test_run_multi_role_analysis_accepts_report_only_for_final_arbiter(tmp_path:
     assert final_arbiter["report"].startswith("PM verdict: avoid for now")
     assert final_arbiter["summary"].startswith("PM verdict: avoid for now")
     assert final_arbiter["decision"]["action"] in {"hold", "avoid"}
+
+
+def test_run_multi_role_analysis_falls_back_when_final_arbiter_generation_raises(tmp_path: Path) -> None:
+    class FakeProvider:
+        name = "fake_provider"
+        timeout_seconds = 9
+
+        def generate(self, *, role: str, prompt: str, fallback_memo: dict[str, object]) -> dict[str, object]:
+            if role == "final_arbiter":
+                raise RuntimeError("arbiter crashed")
+            return {
+                "report": f"{role} report",
+                "signal": "neutral",
+                "confidence": "medium",
+            }
+
+    bundle = run_multi_role_analysis(
+        request=make_request(),
+        features=make_features(tmp_path),
+        evidence=make_evidence(tmp_path),
+        output_root=tmp_path,
+        provider=FakeProvider(),
+    )
+
+    final_arbiter = bundle.role_memos["final_arbiter"]
+    assert final_arbiter["provider"] == "deterministic"
+    assert final_arbiter["analysis_mode"] == "deterministic_fallback"
+    assert final_arbiter["fallback_reason"] == "role_generation_exception"
+    assert final_arbiter["provider_error_type"] == "RuntimeError"
+    assert "arbiter crashed" in final_arbiter["fallback_detail"]
 
 
 def test_run_multi_role_analysis_ignores_invalid_optional_structured_fields_for_defi_and_news(tmp_path: Path) -> None:
@@ -522,6 +553,67 @@ def test_run_multi_role_analysis_builds_sequential_risk_debate_state(tmp_path: P
     assert risk["risk_views"]["neutral"].startswith("Neutral Analyst:")
     assert "Aggressive Analyst:" in final_arbiter["prompt_text"]
     assert "Neutral Analyst:" in final_arbiter["prompt_text"]
+
+
+def test_run_multi_role_analysis_falls_back_when_risk_debate_generation_raises(tmp_path: Path) -> None:
+    class FakeProvider:
+        name = "fake_provider"
+        timeout_seconds = 9
+
+        def generate(self, *, role: str, prompt: str, fallback_memo: dict[str, object]) -> dict[str, object]:
+            if role == "aggressive_risk_analyst":
+                raise RuntimeError("risk debate crashed")
+            return {
+                "report": f"{role} report",
+                "signal": "neutral",
+                "confidence": "medium",
+            }
+
+    bundle = run_multi_role_analysis(
+        request=make_request(),
+        features=make_features(tmp_path),
+        evidence=make_evidence(tmp_path),
+        output_root=tmp_path,
+        provider=FakeProvider(),
+    )
+
+    risk = bundle.role_memos["risk_manager"]
+    assert risk["risk_views"]["aggressive"].startswith("Aggressive Analyst:")
+    assert "Fallback triggered after RuntimeError." in risk["risk_views"]["aggressive"]
+    assert bundle.role_memos["final_arbiter"]["decision"]["action"] in {"hold", "avoid"}
+
+
+def test_run_multi_role_analysis_persists_completed_role_files_before_late_failure(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    original_persist = runner_module._persist_role_memo
+
+    def flaky_persist(*, role: str, memo: dict[str, object], markdown_path: Path, json_path: Path) -> None:
+        original_persist(role=role, memo=memo, markdown_path=markdown_path, json_path=json_path)
+        if role == "risk_manager":
+            raise RuntimeError("disk write failed after risk manager")
+
+    monkeypatch.setattr(runner_module, "_persist_role_memo", flaky_persist)
+
+    try:
+        run_multi_role_analysis(
+            request=make_request(),
+            features=make_features(tmp_path),
+            evidence=make_evidence(tmp_path),
+            output_root=tmp_path,
+        )
+    except RuntimeError as exc:
+        assert str(exc) == "disk write failed after risk manager"
+    else:
+        raise AssertionError("run_multi_role_analysis should surface persist errors")
+
+    agents_dir = tmp_path / "runs" / "r_roles_test" / "agents"
+    assert (agents_dir / "technical_analyst.json").exists()
+    assert (agents_dir / "bear_researcher.json").exists()
+    assert (agents_dir / "risk_manager.json").exists()
+    assert not (agents_dir / "final_arbiter.json").exists()
+    assert (agents_dir / "index.json").exists()
 
 
 # ── KPI 2: Bear sees bull's full key_points ──────────────────────────────────

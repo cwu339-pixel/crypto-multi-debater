@@ -326,5 +326,5 @@ def test_run_pending_reviews_backwrites_research_card(tmp_path: Path) -> None:
     research_card_path = tmp_path / "research_cards" / "2026-03-25" / "BTC_r_review_test.md"
     assert research_card_path.exists()
     card_text = research_card_path.read_text(encoding="utf-8")
-    assert "6. Review Plan" in card_text
+    assert "8. Appeal Conditions" in card_text
     assert "Latest review: completed" in card_text

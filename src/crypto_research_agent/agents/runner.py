@@ -92,7 +92,18 @@ def run_multi_role_analysis(
     agents_dir = Path(output_root) / "runs" / request.run_id / "agents"
     agents_dir.mkdir(parents=True, exist_ok=True)
     call_log_path = agents_dir / "call_log.jsonl"
+    debate_log_path = agents_dir / "debate_log.jsonl"
     call_log_path.unlink(missing_ok=True)
+    debate_log_path.unlink(missing_ok=True)
+    markdown_paths = {role: agents_dir / f"{role}.md" for role in ROLE_ORDER}
+    json_paths = {role: agents_dir / f"{role}.json" for role in ROLE_ORDER}
+    index_path = agents_dir / "index.json"
+    _write_role_index(
+        index_path=index_path,
+        request=request,
+        markdown_paths=markdown_paths,
+        json_paths=json_paths,
+    )
 
     role_memos = _build_role_memos(
         request=request,
@@ -100,36 +111,13 @@ def run_multi_role_analysis(
         evidence=evidence,
         provider=provider or DeterministicAnalysisProvider(),
         call_log_path=call_log_path,
-    )
-    markdown_paths: dict[str, Path] = {}
-    json_paths: dict[str, Path] = {}
-
-    for role in ROLE_ORDER:
-        markdown_path = agents_dir / f"{role}.md"
-        json_path = agents_dir / f"{role}.json"
-        markdown_path.write_text(_render_role_markdown(role, role_memos[role]), encoding="utf-8")
-        json_path.write_text(json.dumps(role_memos[role], indent=2), encoding="utf-8")
-        markdown_paths[role] = markdown_path
-        json_paths[role] = json_path
-
-    index_path = agents_dir / "index.json"
-    index_path.write_text(
-        json.dumps(
-            {
-                "run_id": request.run_id,
-                "asset": request.asset,
-                "roles": {
-                    role: {
-                        "title": ROLE_TITLES[role],
-                        "markdown_path": str(markdown_paths[role]),
-                        "json_path": str(json_paths[role]),
-                    }
-                    for role in ROLE_ORDER
-                },
-            },
-            indent=2,
+        debate_log_path=debate_log_path,
+        persist_role_memo_fn=lambda role, memo: _persist_role_memo(
+            role=role,
+            memo=memo,
+            markdown_path=markdown_paths[role],
+            json_path=json_paths[role],
         ),
-        encoding="utf-8",
     )
 
     return RoleAnalysisBundle(
@@ -148,6 +136,8 @@ def _build_role_memos(
     evidence: EvidencePack,
     provider: AnalysisProvider,
     call_log_path: Path,
+    debate_log_path: Path,
+    persist_role_memo_fn,
 ) -> dict[str, dict[str, object]]:
     latest_close = features.summary.get("latest_close")
     one_day_return = _as_float(features.summary.get("return_1d_pct"))
@@ -511,7 +501,7 @@ def _build_role_memos(
             "rejected_alternative": {
                 "alternative_action": (
                     "buy" if final_decision == "avoid"
-                    else ("avoid" if final_decision == "buy" else "hold")
+                    else ("avoid" if final_decision == "buy" else "buy")
                 ),
                 "why_rejected": (
                     "Insufficient confirmation from 2+ roles; scorecard threshold not met "
@@ -550,6 +540,7 @@ def _build_role_memos(
             use_provider=True,
             call_log_path=call_log_path,
         )
+        persist_role_memo_fn(role, role_memos[role])
 
     debate_state = {
         "history": "",
@@ -573,6 +564,7 @@ def _build_role_memos(
             use_provider=True,
         )
         role_memos["bull_researcher"] = bull_memo
+        persist_role_memo_fn("bull_researcher", bull_memo)
         bear_memo, debate_state = _generate_debate_role_memo(
             role="bear_researcher",
             fallback_memo=base_memos["bear_researcher"],
@@ -587,6 +579,7 @@ def _build_role_memos(
             use_provider=True,
         )
         role_memos["bear_researcher"] = bear_memo
+        persist_role_memo_fn("bear_researcher", bear_memo)
 
     risk_debate_envelope = _build_risk_debate_envelope(
         base_risk_memo=base_memos["risk_manager"],
@@ -599,6 +592,7 @@ def _build_role_memos(
         evidence=evidence,
         provider=provider,
         prior_memos=role_memos,
+        debate_log_path=debate_log_path,
     )
 
     role_memos["risk_manager"] = _generate_role_memo(
@@ -613,6 +607,7 @@ def _build_role_memos(
         use_provider=True,
         call_log_path=call_log_path,
     )
+    persist_role_memo_fn("risk_manager", role_memos["risk_manager"])
 
     role_memos["final_arbiter"] = _generate_role_memo(
         role="final_arbiter",
@@ -626,8 +621,47 @@ def _build_role_memos(
         use_provider=True,
         call_log_path=call_log_path,
     )
+    persist_role_memo_fn("final_arbiter", role_memos["final_arbiter"])
 
     return role_memos
+
+
+def _persist_role_memo(
+    *,
+    role: str,
+    memo: dict[str, object],
+    markdown_path: Path,
+    json_path: Path,
+) -> None:
+    markdown_path.write_text(_render_role_markdown(role, memo), encoding="utf-8")
+    json_path.write_text(json.dumps(memo, indent=2), encoding="utf-8")
+
+
+def _write_role_index(
+    *,
+    index_path: Path,
+    request: ResearchRequest,
+    markdown_paths: dict[str, Path],
+    json_paths: dict[str, Path],
+) -> None:
+    index_path.write_text(
+        json.dumps(
+            {
+                "run_id": request.run_id,
+                "asset": request.asset,
+                "roles": {
+                    role: {
+                        "title": ROLE_TITLES[role],
+                        "markdown_path": str(markdown_paths[role]),
+                        "json_path": str(json_paths[role]),
+                    }
+                    for role in ROLE_ORDER
+                },
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
 
 
 def _generate_debate_role_memo(
@@ -786,6 +820,7 @@ def _build_risk_debate_envelope(
     evidence: EvidencePack,
     provider: AnalysisProvider,
     prior_memos: dict[str, dict[str, object]],
+    debate_log_path: Path,
 ) -> dict[str, object]:
     state = {
         "history": "",
@@ -812,6 +847,7 @@ def _build_risk_debate_envelope(
             evidence=evidence,
             provider=provider,
             prior_memos=prior_memos,
+            debate_log_path=debate_log_path,
         )
         views[stance] = argument
     return {
@@ -834,6 +870,7 @@ def _run_risk_debate_turn(
     evidence: EvidencePack,
     provider: AnalysisProvider,
     prior_memos: dict[str, dict[str, object]],
+    debate_log_path: Path,
 ) -> tuple[str, dict[str, object]]:
     fallback_argument = _compose_risk_debate_argument(
         stance=stance,
@@ -843,29 +880,64 @@ def _run_risk_debate_turn(
         funding_rate=funding_rate,
         coverage_gaps=coverage_gaps,
     )
-    prompt = _build_risk_debate_prompt(
-        stance=stance,
-        state=state,
-        scorecard=scorecard,
-        regime=regime,
-        funding_rate=funding_rate,
-        coverage_gaps=coverage_gaps,
-        request=request,
-        features=features,
-        evidence=evidence,
-        prior_memos=prior_memos,
-    )
     debate_role = f"{stance}_risk_analyst"
-    role_provider = _provider_for_role(provider, debate_role)
-    generated = role_provider.generate(
-        role=debate_role,
-        prompt=prompt,
-        fallback_memo={"report": fallback_argument, "confidence": "medium"},
-    )
-    argument = _normalize_risk_debate_argument(
-        stance=stance,
-        text=_narrative_text(generated) or fallback_argument,
-    )
+    prompt = ""
+    role_provider = provider
+    try:
+        prompt = _build_risk_debate_prompt(
+            stance=stance,
+            state=state,
+            scorecard=scorecard,
+            regime=regime,
+            funding_rate=funding_rate,
+            coverage_gaps=coverage_gaps,
+            request=request,
+            features=features,
+            evidence=evidence,
+            prior_memos=prior_memos,
+        )
+        role_provider = _provider_for_role(provider, debate_role)
+        _append_debate_log_safely(
+            debate_log_path=debate_log_path,
+            stance=stance,
+            event="start",
+            provider=role_provider.name,
+            timeout_seconds=getattr(role_provider, "timeout_seconds", None),
+            prompt_chars=len(prompt),
+            state_count=int(state.get("count", 0)),
+        )
+        generated = role_provider.generate(
+            role=debate_role,
+            prompt=prompt,
+            fallback_memo={"report": fallback_argument, "confidence": "medium"},
+        )
+        argument = _normalize_risk_debate_argument(
+            stance=stance,
+            text=_narrative_text(generated) or fallback_argument,
+        )
+        _append_debate_log_safely(
+            debate_log_path=debate_log_path,
+            stance=stance,
+            event="end",
+            provider=role_provider.name,
+            timeout_seconds=getattr(role_provider, "timeout_seconds", None),
+            prompt_chars=len(prompt),
+            state_count=int(state.get("count", 0)) + 1,
+        )
+    except Exception as exc:
+        argument = _normalize_risk_debate_argument(
+            stance=stance,
+            text=f"{fallback_argument} Fallback triggered after {type(exc).__name__}.",
+        )
+        _append_debate_log_safely(
+            debate_log_path=debate_log_path,
+            stance=stance,
+            event="error",
+            provider="deterministic",
+            timeout_seconds=getattr(role_provider, "timeout_seconds", None),
+            prompt_chars=len(prompt),
+            state_count=int(state.get("count", 0)),
+        )
     history = str(state.get("history", "")).strip()
     new_history = f"{history}\n{argument}".strip() if history else argument
     new_state = dict(state)
@@ -1010,74 +1082,119 @@ def _generate_role_memo(
     call_log_path: Path,
 ) -> dict[str, object]:
     prompt_path = prompts_dir / f"{role}.md"
-    prompt_text = _build_role_prompt(
-        role=role,
-        prompt_path=prompt_path,
-        request=request,
-        features=features,
-        evidence=evidence,
-        fallback_memo=fallback_memo,
-        prior_memos=prior_memos,
-    )
-    role_provider = _provider_for_role(provider, role) if use_provider else provider
+    prompt_text = ""
+    role_provider = provider
+    timeout_seconds = None
     start = time.perf_counter()
-    timeout_seconds = getattr(role_provider, "timeout_seconds", None) if use_provider else None
-    generated = (
-        role_provider.generate(role=role, prompt=prompt_text, fallback_memo=fallback_memo)
-        if use_provider
-        else {}
-    )
-    duration_ms = int((time.perf_counter() - start) * 1000)
-    provider_meta = getattr(role_provider, "last_meta", {}) if use_provider else {}
-    if not generated and use_provider:
-        generated = _salvage_narrative_generated(role=role, provider_meta=provider_meta)
-    validation_error = _validate_generated_memo(
-        role=role,
-        fallback_memo=fallback_memo,
-        generated=generated,
-    ) if use_provider else None
-    if validation_error is not None:
-        import sys
-        missing = [k for k in _required_output_fields(fallback_memo) if k not in generated]
-        print(f"[validation] {role}: {validation_error}, missing={missing}, got={sorted(generated.keys())}", file=sys.stderr)
-    if generated and validation_error is None:
-        memo = {
-            **_normalize_generated_memo(
-                role=role,
-                fallback_memo=fallback_memo,
-                generated=generated,
-            ),
-            "provider": role_provider.name,
-            "analysis_mode": "prompt_driven",
-            "prompt_path": str(prompt_path),
-            "prompt_text": prompt_text,
-        }
-        memo = _polish_generated_memo(
+    try:
+        prompt_text = _build_role_prompt(
             role=role,
-            memo=memo,
-            fallback_memo=fallback_memo,
+            prompt_path=prompt_path,
+            request=request,
             features=features,
             evidence=evidence,
+            fallback_memo=fallback_memo,
+            prior_memos=prior_memos,
         )
-        citation_warning = _check_citation_coverage(role, memo)
-        if citation_warning is not None:
-            memo["citation_warning"] = citation_warning
-        _append_call_log(
-            call_log_path=call_log_path,
+        role_provider = _provider_for_role(provider, role) if use_provider else provider
+        timeout_seconds = getattr(role_provider, "timeout_seconds", None) if use_provider else None
+        generated = (
+            role_provider.generate(role=role, prompt=prompt_text, fallback_memo=fallback_memo)
+            if use_provider
+            else {}
+        )
+        duration_ms = int((time.perf_counter() - start) * 1000)
+        provider_meta = getattr(role_provider, "last_meta", {}) if use_provider else {}
+        if not generated and use_provider:
+            generated = _salvage_narrative_generated(role=role, provider_meta=provider_meta)
+        validation_error = _validate_generated_memo(
             role=role,
-            provider=role_provider.name,
-            analysis_mode="prompt_driven",
+            fallback_memo=fallback_memo,
+            generated=generated,
+        ) if use_provider else None
+        if validation_error is not None:
+            import sys
+            missing = [k for k in _required_output_fields(fallback_memo) if k not in generated]
+            print(f"[validation] {role}: {validation_error}, missing={missing}, got={sorted(generated.keys())}", file=sys.stderr)
+        if generated and validation_error is None:
+            memo = {
+                **_normalize_generated_memo(
+                    role=role,
+                    fallback_memo=fallback_memo,
+                    generated=generated,
+                ),
+                "provider": role_provider.name,
+                "analysis_mode": "prompt_driven",
+                "prompt_path": str(prompt_path),
+                "prompt_text": prompt_text,
+            }
+            memo = _polish_generated_memo(
+                role=role,
+                memo=memo,
+                fallback_memo=fallback_memo,
+                features=features,
+                evidence=evidence,
+            )
+            citation_warning = _check_citation_coverage(role, memo)
+            if citation_warning is not None:
+                memo["citation_warning"] = citation_warning
+            _append_call_log_safely(
+                call_log_path=call_log_path,
+                role=role,
+                provider=role_provider.name,
+                analysis_mode="prompt_driven",
+                timeout_seconds=timeout_seconds,
+                duration_ms=duration_ms,
+                validation_error=None,
+                fallback_reason=None,
+                fallback_detail=None,
+                provider_error_type=None,
+            )
+            return memo
+        return _build_fallback_role_memo(
+            role=role,
+            fallback_memo=fallback_memo,
+            prompt_path=prompt_path,
+            prompt_text=prompt_text,
             timeout_seconds=timeout_seconds,
             duration_ms=duration_ms,
-            validation_error=None,
-            fallback_reason=None,
-            fallback_detail=None,
-            provider_error_type=None,
+            call_log_path=call_log_path,
+            validation_error=validation_error,
+            fallback_reason=validation_error or str(provider_meta.get("reason") or "provider_empty_response"),
+            fallback_detail=provider_meta.get("detail") if isinstance(provider_meta.get("detail"), str) else None,
+            provider_error_type=provider_meta.get("error_type") if isinstance(provider_meta.get("error_type"), str) else None,
         )
-        return memo
-    fallback_reason = validation_error or str(provider_meta.get("reason") or "provider_empty_response")
-    fallback_detail = provider_meta.get("detail")
-    provider_error_type = provider_meta.get("error_type")
+    except Exception as exc:
+        duration_ms = int((time.perf_counter() - start) * 1000)
+        return _build_fallback_role_memo(
+            role=role,
+            fallback_memo=fallback_memo,
+            prompt_path=prompt_path,
+            prompt_text=prompt_text,
+            timeout_seconds=timeout_seconds,
+            duration_ms=duration_ms,
+            call_log_path=call_log_path,
+            validation_error=None,
+            fallback_reason="role_generation_exception",
+            fallback_detail=f"{type(exc).__name__}: {exc}",
+            provider_error_type=type(exc).__name__,
+        )
+
+
+def _build_fallback_role_memo(
+    *,
+    role: str,
+    fallback_memo: dict[str, object],
+    prompt_path: Path,
+    prompt_text: str,
+    timeout_seconds: int | None,
+    duration_ms: int,
+    call_log_path: Path,
+    validation_error: str | None,
+    fallback_reason: str,
+    fallback_detail: str | None,
+    provider_error_type: str | None,
+) -> dict[str, object]:
     memo = {
         **fallback_memo,
         "provider": "deterministic",
@@ -1092,7 +1209,7 @@ def _generate_role_memo(
         memo["fallback_detail"] = fallback_detail
     if isinstance(provider_error_type, str) and provider_error_type.strip():
         memo["provider_error_type"] = provider_error_type
-    _append_call_log(
+    _append_call_log_safely(
         call_log_path=call_log_path,
         role=role,
         provider="deterministic",
@@ -1709,6 +1826,43 @@ def _append_call_log(
     }
     with call_log_path.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(payload) + "\n")
+
+
+def _append_call_log_safely(**kwargs: object) -> None:
+    try:
+        _append_call_log(**kwargs)
+    except Exception:
+        return
+
+
+def _append_debate_log(
+    *,
+    debate_log_path: Path,
+    stance: str,
+    event: str,
+    provider: str,
+    timeout_seconds: int | None,
+    prompt_chars: int,
+    state_count: int,
+) -> None:
+    payload = {
+        "stance": stance,
+        "event": event,
+        "provider": provider,
+        "timeout_seconds": timeout_seconds,
+        "prompt_chars": prompt_chars,
+        "state_count": state_count,
+        "recorded_at_utc": time.time(),
+    }
+    with debate_log_path.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(payload) + "\n")
+
+
+def _append_debate_log_safely(**kwargs: object) -> None:
+    try:
+        _append_debate_log(**kwargs)
+    except Exception:
+        return
 
 
 def _salvage_narrative_generated(*, role: str, provider_meta: dict[str, object]) -> dict[str, object]:

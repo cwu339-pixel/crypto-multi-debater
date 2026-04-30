@@ -50,6 +50,7 @@ def build_scorecard(
     coverage_gaps: list[str],
     evidence_summary: dict[str, object],
 ) -> dict[str, object]:
+    core_gaps, supplementary_gaps = _classify_gaps(coverage_gaps)
     inputs = ScoreInputs(
         momentum=_score_momentum(feature_summary),
         liquidity=_score_liquidity(feature_summary),
@@ -60,6 +61,7 @@ def build_scorecard(
         data_quality_penalty=_score_data_quality_penalty(coverage_gaps, evidence_summary),
     )
     result = compute_weighted_score(inputs)
+    confidence = _confidence_from_market_context(feature_summary=feature_summary, core_gaps=core_gaps)
     return {
         "inputs": {
             "momentum": round(inputs.momentum, 2),
@@ -70,9 +72,17 @@ def build_scorecard(
             "sentiment": round(inputs.sentiment, 2),
             "data_quality_penalty": round(inputs.data_quality_penalty, 2),
         },
+        "action_score": result.final_score,
         "final_score": result.final_score,
-        "confidence": result.confidence,
+        "confidence": confidence,
         "score_decision": _decision_from_score(result.final_score),
+        "data_quality": {
+            "core_complete": not core_gaps,
+            "supplementary_complete": not supplementary_gaps,
+            "core_gaps": core_gaps,
+            "supplementary_gaps": supplementary_gaps,
+            "penalty": round(inputs.data_quality_penalty, 2),
+        },
     }
 
 
@@ -117,18 +127,25 @@ def _score_liquidity(feature_summary: dict[str, object]) -> float:
 
 
 def _score_derivatives(coverage_gaps: list[str], feature_summary: dict[str, object]) -> float:
-    if any(_is_effective_gap(gap, "coinglass:") for gap in coverage_gaps):
-        return 35.0
-    score = 60.0
     funding_rate = _as_float(feature_summary.get("derivatives_funding_rate_latest"))
     oi_change = _as_float(feature_summary.get("derivatives_open_interest_change_pct"))
     liquidation_total = _as_float(feature_summary.get("derivatives_total_liquidation_usd_24h"))
+    has_basic_derivatives = any(
+        value != 0.0 for value in (funding_rate, oi_change, liquidation_total)
+    )
+    if not has_basic_derivatives:
+        return 50.0 if any(_is_effective_gap(gap, "coinglass:") for gap in coverage_gaps) else 60.0
+    score = 60.0
     if 0 < funding_rate <= 0.01:
         score += 8.0
+    elif -0.01 <= funding_rate < 0:
+        score -= 4.0
     elif funding_rate > 0.03:
         score -= 8.0
     if 0 < oi_change <= 5.0:
         score += 4.0
+    elif oi_change < 0:
+        score -= 4.0
     elif oi_change > 10.0:
         score -= 6.0
     if liquidation_total >= 300_000_000:
@@ -139,12 +156,13 @@ def _score_derivatives(coverage_gaps: list[str], feature_summary: dict[str, obje
 
 
 def _score_defi(coverage_gaps: list[str], feature_summary: dict[str, object]) -> float:
-    if any(_is_effective_gap(gap, "defillama:") for gap in coverage_gaps):
-        return 40.0
-    score = 60.0
     tvl_change_7d = _as_float(feature_summary.get("defi_tvl_change_7d_pct"))
     mc_tvl_ratio = _as_float(feature_summary.get("mc_tvl_ratio"))
     stablecoin_apy_change_7d = _as_float(feature_summary.get("defi_stablecoin_apy_change_7d"))
+    has_defi_inputs = any(value != 0.0 for value in (tvl_change_7d, mc_tvl_ratio, stablecoin_apy_change_7d))
+    if not has_defi_inputs:
+        return 50.0 if any(_is_effective_gap(gap, "defillama:") for gap in coverage_gaps) else 60.0
+    score = 60.0
     score += min(max(tvl_change_7d, -10.0), 10.0)
     if 0 < mc_tvl_ratio <= 1.0:
         score += 8.0
@@ -180,11 +198,93 @@ def _score_sentiment(evidence_summary: dict[str, object]) -> float:
 
 
 def _score_data_quality_penalty(coverage_gaps: list[str], evidence_summary: dict[str, object]) -> float:
-    effective_gaps = [gap for gap in coverage_gaps if _is_effective_gap(gap)]
-    penalty = -5.0 * len(effective_gaps)
+    core_gaps, supplementary_gaps = _classify_gaps(coverage_gaps)
+    penalty = -10.0 * len(core_gaps)
+    if supplementary_gaps:
+        penalty -= 5.0
     if str(evidence_summary.get("evidence_status", "")).lower() == "stub":
         penalty -= 0.0
     return penalty
+
+
+def _confidence_from_market_context(
+    *,
+    feature_summary: dict[str, object],
+    core_gaps: list[str],
+) -> str:
+    if core_gaps or not _core_data_complete(feature_summary):
+        return "low"
+
+    signals = [
+        _trend_signal(feature_summary),
+        _momentum_signal(feature_summary),
+        _derivatives_signal(feature_summary),
+    ]
+    bullish = sum(1 for signal in signals if signal == "bull")
+    bearish = sum(1 for signal in signals if signal == "bear")
+
+    if bullish and bearish:
+        return "low" if abs(bullish - bearish) <= 1 else "medium"
+    if not bullish and not bearish:
+        return "medium"
+    if max(bullish, bearish) >= 3:
+        return "high"
+    return "medium"
+
+
+def _core_data_complete(feature_summary: dict[str, object]) -> bool:
+    if str(feature_summary.get("feature_status", "")).lower() != "complete":
+        return False
+    return _as_float(feature_summary.get("latest_close")) > 0 and _as_float(feature_summary.get("avg_volume")) > 0
+
+
+def _trend_signal(feature_summary: dict[str, object]) -> str | None:
+    regime = str(feature_summary.get("regime", "")).lower()
+    price_vs_sma200 = _as_float(feature_summary.get("price_vs_sma200_pct"))
+    if regime == "bear" or price_vs_sma200 <= -10.0:
+        return "bear"
+    if regime == "bull" or price_vs_sma200 >= 10.0:
+        return "bull"
+    return None
+
+
+def _momentum_signal(feature_summary: dict[str, object]) -> str | None:
+    total_return = _as_float(feature_summary.get("return_total_pct"))
+    one_day_return = _as_float(feature_summary.get("return_1d_pct"))
+    rsi_14 = _as_float(feature_summary.get("rsi_14"))
+    if total_return <= -10.0 or one_day_return <= -2.0 or (0 < rsi_14 < 45):
+        return "bear"
+    if total_return >= 10.0 or one_day_return >= 2.0 or rsi_14 >= 55.0:
+        return "bull"
+    return None
+
+
+def _derivatives_signal(feature_summary: dict[str, object]) -> str | None:
+    funding_rate = _as_float(feature_summary.get("derivatives_funding_rate_latest"))
+    oi_change = _as_float(feature_summary.get("derivatives_open_interest_change_pct"))
+    if funding_rate == 0.0 and oi_change == 0.0:
+        return None
+    if funding_rate < 0 or oi_change < 0:
+        return "bear"
+    if 0 < funding_rate <= 0.01 and 0 < oi_change <= 5.0:
+        return "bull"
+    return None
+
+
+def _classify_gaps(coverage_gaps: list[str]) -> tuple[list[str], list[str]]:
+    core_prefixes = ("openbb", "binance")
+    core_keywords = ("price", "ohlcv", "candle", "volume")
+    core: list[str] = []
+    supplementary: list[str] = []
+    for gap in coverage_gaps:
+        if not _is_effective_gap(gap):
+            continue
+        label = gap.split(":")[0].lower()
+        if label.startswith(core_prefixes) or any(keyword in label for keyword in core_keywords):
+            core.append(gap)
+        else:
+            supplementary.append(gap)
+    return core, supplementary
 
 
 def _is_effective_gap(gap: str, prefix: str | None = None) -> bool:

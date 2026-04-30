@@ -105,17 +105,152 @@ def test_run_workflow_writes_framework_artifacts(tmp_path) -> None:
     card_text = result["artifacts"]["research_card"].read_text(encoding="utf-8")
     assert "# BTC Research Report" in card_text
     assert "Processed signal: HOLD" in card_text
-    assert "1. Rating" in card_text
-    assert "2. Executive Summary" in card_text
-    assert "3. Investment Thesis" in card_text
-    assert "4. Debate Summary" in card_text
-    assert "5. Risk Controls" in card_text
-    assert "6. Review Plan" in card_text
-    assert "7. Data Quality" in card_text
+    assert "1. Verdict" in card_text
+    assert "2. Case File" in card_text
+    assert "3. Bench Evidence" in card_text
+    assert "4. Prosecution" in card_text
+    assert "5. Defense" in card_text
+    assert "6. Sentencing / Guardrails" in card_text
+    assert "7. Judge's Ruling" in card_text
+    assert "8. Appeal Conditions" in card_text
+    assert "9. Data Quality Footnote" in card_text
+    assert "How To Read This Verdict" in card_text
+    assert "Action Score is the baseline action signal, not a return forecast." in card_text
+    assert "Confidence measures agreement across core market signals" in card_text
+    assert "Supplementary gaps contribute at most a single -5 penalty." in card_text
     assert "Total: 62/100" in card_text
     assert "Momentum:" in card_text
     assert "Derivatives:" in card_text
     assert "Data quality penalty:" in card_text
+
+
+def test_run_workflow_persists_run_artifacts_before_review_scheduling(tmp_path) -> None:
+    request = ResearchRequest(
+        asset="BTC",
+        thesis="Assess reversal risk",
+        horizon_days=3,
+        run_id="r_framework_persist_before_review",
+        as_of_utc=datetime(2026, 3, 25, 9, 30, tzinfo=timezone.utc),
+    )
+
+    def fake_collect_market_data(request, sources_config, output_root):
+        return RawDataBundle(
+            run_id=request.run_id,
+            source_results={
+                "openbb": SourceResult(source="openbb", status="fetched", reason=None, artifact_paths=[]),
+            },
+            coverage_gaps=[],
+            provenance_path=output_root / "runs" / request.run_id / "provenance.jsonl",
+        )
+
+    def fake_build_feature_bundle(request, raw_data, output_root):
+        return FeatureBundle(
+            run_id=request.run_id,
+            summary={"asset": request.asset, "feature_status": "complete"},
+            coverage_gaps=[],
+            features_path=output_root / "runs" / request.run_id / "features" / "summary.json",
+            notes_path=output_root / "runs" / request.run_id / "features" / "notes.md",
+        )
+
+    def fake_build_evidence_pack(request, raw_data, features, output_root):
+        return EvidencePack(
+            run_id=request.run_id,
+            summary={"evidence_status": "stub"},
+            markdown_path=output_root / "runs" / request.run_id / "evidence" / "evidence.md",
+            json_path=output_root / "runs" / request.run_id / "evidence" / "evidence.json",
+        )
+
+    def fake_run_multi_role_analysis(request, features, evidence, output_root, provider):
+        agents_dir = output_root / "runs" / request.run_id / "agents"
+        agents_dir.mkdir(parents=True, exist_ok=True)
+        return RoleAnalysisBundle(
+            run_id=request.run_id,
+            role_memos={
+                "final_arbiter": {
+                    "decision": {"action": "hold", "direction": "neutral", "horizon_days": 3, "position_size": "half"},
+                    "decision_label": "hold",
+                    "scorecard": {"final_score": 62, "confidence": "medium", "score_decision": "hold"},
+                }
+            },
+            markdown_paths={"final_arbiter": agents_dir / "final_arbiter.md"},
+            json_paths={"final_arbiter": agents_dir / "final_arbiter.json"},
+            index_path=agents_dir / "index.json",
+        )
+
+    def failing_schedule_review(*, request, output_root):
+        raise RuntimeError("review scheduler unavailable")
+
+    run_json = tmp_path / "runs" / request.run_id / "run.json"
+
+    try:
+        run_workflow(
+            request=request,
+            sources_config={"sources": {"openbb": {"enabled": True}}},
+            output_root=tmp_path,
+            collect_market_data_fn=fake_collect_market_data,
+            build_feature_bundle_fn=fake_build_feature_bundle,
+            build_evidence_pack_fn=fake_build_evidence_pack,
+            run_multi_role_analysis_fn=fake_run_multi_role_analysis,
+            schedule_review_fn=failing_schedule_review,
+        )
+    except RuntimeError as exc:
+        assert str(exc) == "review scheduler unavailable"
+    else:
+        raise AssertionError("run_workflow should surface review scheduling errors")
+
+    assert run_json.exists()
+    run_payload = json.loads(run_json.read_text(encoding="utf-8"))
+    assert run_payload["status"] == "failed"
+    assert run_payload["failed_stage"] == "review_loop"
+    assert run_payload["stages"]["review_loop"] == "failed"
+    assert run_payload["final_decision"] == "hold"
+
+
+def test_run_workflow_persists_partial_state_when_feature_stage_fails(tmp_path) -> None:
+    request = ResearchRequest(
+        asset="BTC",
+        thesis="Assess reversal risk",
+        horizon_days=3,
+        run_id="r_framework_feature_failure",
+        as_of_utc=datetime(2026, 3, 25, 9, 30, tzinfo=timezone.utc),
+    )
+
+    def fake_collect_market_data(request, sources_config, output_root):
+        return RawDataBundle(
+            run_id=request.run_id,
+            source_results={
+                "openbb": SourceResult(source="openbb", status="fetched", reason=None, artifact_paths=[]),
+            },
+            coverage_gaps=[],
+            provenance_path=output_root / "runs" / request.run_id / "provenance.jsonl",
+        )
+
+    def failing_build_feature_bundle(request, raw_data, output_root):
+        raise RuntimeError("feature stage failed")
+
+    run_json = tmp_path / "runs" / request.run_id / "run.json"
+
+    try:
+        run_workflow(
+            request=request,
+            sources_config={"sources": {"openbb": {"enabled": True}}},
+            output_root=tmp_path,
+            collect_market_data_fn=fake_collect_market_data,
+            build_feature_bundle_fn=failing_build_feature_bundle,
+        )
+    except RuntimeError as exc:
+        assert str(exc) == "feature stage failed"
+    else:
+        raise AssertionError("run_workflow should surface feature stage errors")
+
+    assert run_json.exists()
+    run_payload = json.loads(run_json.read_text(encoding="utf-8"))
+    assert run_payload["status"] == "failed"
+    assert run_payload["failed_stage"] == "feature_engineering"
+    assert run_payload["stages"]["data_collection"] == "completed"
+    assert run_payload["stages"]["feature_engineering"] == "failed"
+    assert run_payload["provenance_path"].endswith("provenance.jsonl")
+    assert run_payload["features_path"] is None
 
 
 def test_run_workflow_renders_research_card_when_technical_levels_are_strings(tmp_path) -> None:
@@ -210,7 +345,7 @@ def test_run_workflow_renders_research_card_when_technical_levels_are_strings(tm
     card_text = result["artifacts"]["research_card"].read_text(encoding="utf-8")
     assert "# BTC Research Report" in card_text
     assert "Processed signal: HOLD" in card_text
-    assert "1. Rating" in card_text
+    assert "1. Verdict" in card_text
 
 
 def test_run_workflow_renders_historical_replay_note_in_research_card(tmp_path) -> None:
@@ -404,7 +539,10 @@ def test_run_workflow_renders_debate_summary_in_research_card(tmp_path) -> None:
     )
 
     card_text = result["artifacts"]["research_card"].read_text(encoding="utf-8")
-    assert "4. Debate Summary" in card_text
+    assert "3. Bench Evidence" in card_text
+    assert "4. Prosecution" in card_text
+    assert "5. Defense" in card_text
+    assert "6. Sentencing / Guardrails" in card_text
     assert "Bull Analyst: Momentum and cycle structure still favor continuation." in card_text
     assert "Bear Analyst: The move is still vulnerable without broader confirmation." in card_text
     assert "Aggressive Analyst: Lean in while structure is intact." in card_text

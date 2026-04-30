@@ -16,85 +16,139 @@ def resolve_display_artifact_paths(*, output_root: Path, asset: str, run_id: str
     }
 
 
-def write_run_artifacts(state: RunState, *, output_root: Path) -> RunArtifacts:
-    run_root = Path(output_root) / "runs" / state.request.run_id
+def write_partial_run_artifacts(
+    *,
+    request,
+    output_root: Path,
+    stages: dict[str, str],
+    raw_data=None,
+    features=None,
+    evidence=None,
+    role_analysis=None,
+    status: str = "running",
+    failed_stage: str | None = None,
+    error_type: str | None = None,
+    error_detail: str | None = None,
+) -> RunArtifacts:
+    run_root = Path(output_root) / "runs" / request.run_id
     run_root.mkdir(parents=True, exist_ok=True)
 
-    card_dir = Path(output_root) / "research_cards" / state.request.as_of_utc.date().isoformat()
+    card_dir = Path(output_root) / "research_cards" / request.as_of_utc.date().isoformat()
     card_dir.mkdir(parents=True, exist_ok=True)
 
     run_json = run_root / "run.json"
     artifact_index = run_root / "artifacts.json"
-    research_card = card_dir / f"{state.request.asset}_{state.request.run_id}.md"
+    research_card = card_dir / f"{request.asset}_{request.run_id}.md"
     display_paths = resolve_display_artifact_paths(
         output_root=output_root,
-        asset=state.request.asset,
-        run_id=state.request.run_id,
+        asset=request.asset,
+        run_id=request.run_id,
     )
 
-    run_json.write_text(
-        json.dumps(
-            {
-                "run_id": state.request.run_id,
-                "request": {
-                    "asset": state.request.asset,
-                    "thesis": state.request.thesis,
-                    "horizon_days": state.request.horizon_days,
-                    "as_of_utc": state.request.as_of_utc.isoformat(),
-                },
-                "stages": state.stages,
-                "coverage_gaps": state.raw_data.coverage_gaps,
-                "provenance_path": str(state.raw_data.provenance_path),
-                "features_path": str(state.features.features_path),
-                "evidence_path": str(state.evidence.json_path),
-                "roles_index_path": str(state.role_analysis.index_path),
-                "roles_call_log_path": str(_roles_call_log_path(state)),
-                "final_decision": final_decision_label(state.role_analysis.role_memos.get("final_arbiter", {})),
-                "scorecard": state.role_analysis.role_memos.get("final_arbiter", {}).get("scorecard"),
-                "review_status_path": str(display_paths["review_status"]) if display_paths["review_status"] else None,
-            },
-            indent=2,
+    run_payload = {
+        "run_id": request.run_id,
+        "request": {
+            "asset": request.asset,
+            "thesis": request.thesis,
+            "horizon_days": request.horizon_days,
+            "as_of_utc": request.as_of_utc.isoformat(),
+        },
+        "status": status,
+        "failed_stage": failed_stage,
+        "error_type": error_type,
+        "error_detail": error_detail,
+        "stages": stages,
+        "coverage_gaps": list(raw_data.coverage_gaps) if raw_data is not None else [],
+        "provenance_path": str(raw_data.provenance_path) if raw_data is not None else None,
+        "features_path": str(features.features_path) if features is not None else None,
+        "evidence_path": str(evidence.json_path) if evidence is not None else None,
+        "roles_index_path": str(role_analysis.index_path) if role_analysis is not None else None,
+        "roles_call_log_path": (
+            str(role_analysis.index_path.parent / "call_log.jsonl")
+            if role_analysis is not None
+            else None
         ),
-        encoding="utf-8",
-    )
-
-    artifact_index.write_text(
-        json.dumps(
-            {
-                "run_json": str(run_json),
-                "provenance": str(state.raw_data.provenance_path),
-                "features": str(state.features.features_path),
-                "feature_notes": str(state.features.notes_path),
-                "evidence_markdown": str(state.evidence.markdown_path),
-                "evidence_json": str(state.evidence.json_path),
-                "roles_index": str(state.role_analysis.index_path),
-                "roles_call_log": str(_roles_call_log_path(state)),
-                "research_card": str(research_card),
-                "review_status": str(display_paths["review_status"]) if display_paths["review_status"] else None,
-                "scorecard": state.role_analysis.role_memos.get("final_arbiter", {}).get("scorecard"),
-                "raw_data": {
-                    source: [str(path) for path in result.artifact_paths]
-                    for source, result in state.raw_data.source_results.items()
-                },
-                "roles": {
-                    role: {
-                        "markdown_path": str(state.role_analysis.markdown_paths[role]),
-                        "json_path": str(state.role_analysis.json_paths[role]),
-                    }
-                    for role in state.role_analysis.role_memos
-                },
-            },
-            indent=2,
+        "roles_debate_log_path": (
+            str(role_analysis.index_path.parent / "debate_log.jsonl")
+            if role_analysis is not None
+            else None
         ),
-        encoding="utf-8",
-    )
+        "final_decision": final_decision_label(role_analysis.role_memos.get("final_arbiter", {}))
+        if role_analysis is not None
+        else None,
+        "scorecard": (
+            role_analysis.role_memos.get("final_arbiter", {}).get("scorecard")
+            if role_analysis is not None
+            else None
+        ),
+        "review_status_path": str(display_paths["review_status"]) if display_paths["review_status"] else None,
+    }
+    run_json.write_text(json.dumps(run_payload, indent=2), encoding="utf-8")
 
-    research_card.write_text(_render_framework_card(state=state, output_root=output_root), encoding="utf-8")
+    artifact_index_payload = {
+        "run_json": str(run_json),
+        "provenance": str(raw_data.provenance_path) if raw_data is not None else None,
+        "features": str(features.features_path) if features is not None else None,
+        "feature_notes": str(features.notes_path) if features is not None else None,
+        "evidence_markdown": str(evidence.markdown_path) if evidence is not None else None,
+        "evidence_json": str(evidence.json_path) if evidence is not None else None,
+        "roles_index": str(role_analysis.index_path) if role_analysis is not None else None,
+        "roles_call_log": str(role_analysis.index_path.parent / "call_log.jsonl") if role_analysis is not None else None,
+        "roles_debate_log": str(role_analysis.index_path.parent / "debate_log.jsonl") if role_analysis is not None else None,
+        "research_card": str(research_card),
+        "review_status": str(display_paths["review_status"]) if display_paths["review_status"] else None,
+        "scorecard": role_analysis.role_memos.get("final_arbiter", {}).get("scorecard") if role_analysis is not None else None,
+        "raw_data": (
+            {
+                source: [str(path) for path in result.artifact_paths]
+                for source, result in raw_data.source_results.items()
+            }
+            if raw_data is not None
+            else {}
+        ),
+        "roles": (
+            {
+                role: {
+                    "markdown_path": str(role_analysis.markdown_paths[role]),
+                    "json_path": str(role_analysis.json_paths[role]),
+                }
+                for role in role_analysis.role_memos
+            }
+            if role_analysis is not None
+            else {}
+        ),
+    }
+    artifact_index.write_text(json.dumps(artifact_index_payload, indent=2), encoding="utf-8")
+
+    if role_analysis is not None:
+        state = RunState(
+            request=request,
+            raw_data=raw_data,
+            features=features,
+            evidence=evidence,
+            role_analysis=role_analysis,
+            artifacts=RunArtifacts(run_json=run_json, artifact_index=artifact_index, research_card=research_card),
+            stages=stages,
+        )
+        research_card.write_text(_render_framework_card(state=state, output_root=output_root), encoding="utf-8")
 
     return RunArtifacts(
         run_json=run_json,
         artifact_index=artifact_index,
         research_card=research_card,
+    )
+
+
+def write_run_artifacts(state: RunState, *, output_root: Path) -> RunArtifacts:
+    return write_partial_run_artifacts(
+        request=state.request,
+        output_root=output_root,
+        stages=state.stages,
+        raw_data=state.raw_data,
+        features=state.features,
+        evidence=state.evidence,
+        role_analysis=state.role_analysis,
+        status="completed",
     )
 
 
@@ -133,6 +187,7 @@ def _render_framework_card(*, state: RunState, output_root: Path) -> str:
         "evidence_path": str(state.evidence.json_path),
         "roles_index_path": str(state.role_analysis.index_path),
         "roles_call_log_path": str(_roles_call_log_path(state)),
+        "roles_debate_log_path": str(_roles_debate_log_path(state)),
         "final_decision": final_decision_label(state.role_analysis.role_memos.get("final_arbiter", {})),
         "scorecard": state.role_analysis.role_memos.get("final_arbiter", {}).get("scorecard"),
         "feature_summary": state.features.summary,
@@ -173,39 +228,53 @@ def _render_framework_card_from_payload(*, run_payload: dict[str, Any], output_r
         "",
         f"Processed signal: {rating_label}",
         "",
-        "1. Rating",
-        rating_label.title(),
-        "",
-        "2. Executive Summary",
-        _render_executive_summary(
-            asset=asset,
+        "1. Verdict",
+        _render_verdict_strip(
             horizon=horizon,
-            final_decision=final_decision,
+            rating_label=rating_label,
             confidence_display=confidence_display,
-            final_arbiter=final_arbiter,
             scorecard=scorecard,
-            coverage_gaps=coverage_gaps,
         ),
         "",
-        "3. Investment Thesis",
-        _render_investment_thesis(
+        "How To Read This Verdict",
+        _render_verdict_guide(scorecard),
+        "",
+        "2. Case File",
+        _render_case_file(
+            asset=asset,
+            request=request,
+            final_decision=final_decision,
+            final_arbiter=final_arbiter,
+            horizon=horizon,
+        ),
+        "",
+        "3. Bench Evidence",
+        _render_bench_evidence(role_memos),
+        "",
+        "4. Prosecution",
+        f"- {_debate_argument_text(role_memos.get('bear_researcher', {}))}",
+        "",
+        "5. Defense",
+        f"- {_debate_argument_text(role_memos.get('bull_researcher', {}))}",
+        "",
+        "6. Sentencing / Guardrails",
+        _render_sentencing_guardrails(final_arbiter=final_arbiter, role_memos=role_memos),
+        "",
+        "7. Judge's Ruling",
+        _render_judges_ruling(
             final_arbiter=final_arbiter,
             role_memos=role_memos,
+            asset=asset,
+            horizon=horizon,
         ),
         "",
-        "4. Debate Summary",
-        _render_visible_debate_summary(role_memos),
+        "8. Appeal Conditions",
+        _render_appeal_conditions(final_arbiter, review_payload),
         "",
-        "5. Risk Controls",
-        _render_risk_controls(final_arbiter=final_arbiter, role_memos=role_memos),
-        "",
-        "6. Review Plan",
-        _render_review_plan(final_arbiter, review_payload),
-        "",
-        "7. Data Quality",
+        "9. Data Quality Footnote",
         _render_data_quality(coverage_gaps, feature_summary, evidence_summary),
         "",
-        "Score breakdown",
+        "Score Breakdown",
         _render_score_breakdown(scorecard, coverage_gaps),
         "",
     ]
@@ -231,7 +300,7 @@ def _exec_action_line(
     horizon: Any,
 ) -> str:
     decision = final_arbiter.get("decision") or {}
-    confidence = final_arbiter.get("confidence") or (decision.get("confidence") if isinstance(decision, dict) else None) or "n/a"
+    confidence = _resolve_confidence(final_arbiter)
     direction = decision.get("direction", "") if isinstance(decision, dict) else ""
     direction_str = f" ({direction})" if direction and direction != "neutral" else ""
     return f"Tactical {final_decision.upper()}{direction_str} — {asset} over {horizon}d. Confidence: {confidence}."
@@ -329,6 +398,10 @@ def _render_stage_lines(stages: dict[str, str]) -> str:
 
 def _roles_call_log_path(state: RunState) -> Path:
     return state.role_analysis.index_path.parent / "call_log.jsonl"
+
+
+def _roles_debate_log_path(state: RunState) -> Path:
+    return state.role_analysis.index_path.parent / "debate_log.jsonl"
 
 
 def _render_role_execution(call_log_path: Path | None) -> str:
@@ -478,14 +551,14 @@ def _render_conclusion(
 
 
 def _resolve_confidence(final_arbiter: dict[str, Any]) -> str:
-    confidence = final_arbiter.get("confidence")
-    if isinstance(confidence, str) and confidence.strip():
-        return confidence.strip()
     scorecard = final_arbiter.get("scorecard")
     if isinstance(scorecard, dict):
         card_confidence = scorecard.get("confidence")
         if isinstance(card_confidence, str) and card_confidence.strip():
             return card_confidence.strip()
+    confidence = final_arbiter.get("confidence")
+    if isinstance(confidence, str) and confidence.strip():
+        return confidence.strip()
     decision = final_arbiter.get("decision")
     if isinstance(decision, dict):
         return str(decision.get("confidence", "unknown"))
@@ -506,12 +579,72 @@ def _render_executive_summary(
         f"- Immediate posture: {_exec_action_line(final_arbiter, final_decision, asset, horizon)}",
         f"- Confidence: {confidence_display}",
     ]
-    final_score = scorecard.get("final_score")
-    if final_score is not None:
-        lines.append(f"- Quant score: {final_score}/100")
+    action_score = scorecard.get("action_score", scorecard.get("final_score"))
+    if action_score is not None:
+        lines.append(f"- Action score: {action_score}/100")
     conclusion = _render_conclusion(final_arbiter, final_decision, asset, horizon)
     if conclusion:
         lines.append(f"- Conclusion: {conclusion}")
+    return "\n".join(lines)
+
+
+def _render_verdict_strip(
+    *,
+    horizon: Any,
+    rating_label: str,
+    confidence_display: str,
+    scorecard: dict[str, Any],
+) -> str:
+    lines = [
+        f"- Verdict: {rating_label.title()}",
+        f"- Confidence: {confidence_display}",
+        f"- Horizon: {horizon}d" if horizon is not None else "- Horizon: n/a",
+    ]
+    action_score = scorecard.get("action_score", scorecard.get("final_score"))
+    if action_score is not None:
+        lines.append(f"- Action Score: {action_score}/100")
+    return "\n".join(lines)
+
+
+def _render_verdict_guide(scorecard: dict[str, Any]) -> str:
+    data_quality = scorecard.get("data_quality") if isinstance(scorecard, dict) else None
+    core_complete = data_quality.get("core_complete") if isinstance(data_quality, dict) else None
+    supplementary_complete = data_quality.get("supplementary_complete") if isinstance(data_quality, dict) else None
+    inputs = scorecard.get("inputs") if isinstance(scorecard, dict) else None
+    data_quality_penalty = inputs.get("data_quality_penalty") if isinstance(inputs, dict) else None
+    lines = [
+        "- Action Score is the baseline action signal, not a return forecast.",
+        "- Confidence measures agreement across core market signals, not how many supplementary APIs responded.",
+    ]
+    if core_complete is False:
+        lines.append("- Core data is incomplete, so confidence should be treated as structurally weak.")
+    elif supplementary_complete is False:
+        lines.append("- Supplementary gaps contribute at most a single -5 penalty.")
+    elif isinstance(data_quality_penalty, (int, float)) and data_quality_penalty < 0:
+        lines.append("- Supplementary gaps contribute at most a single -5 penalty.")
+    else:
+        lines.append("- Data quality is clean enough that the action signal should be read on its own merits.")
+    return "\n".join(lines)
+
+
+def _render_case_file(
+    *,
+    asset: str,
+    request: dict[str, Any],
+    final_decision: str,
+    final_arbiter: dict[str, Any],
+    horizon: Any,
+) -> str:
+    as_of = str(request.get("as_of_utc", "unknown"))[:10]
+    thesis = str(request.get("thesis", "n/a"))
+    lines = [
+        f"- As of: {as_of}",
+        f"- Issue: whether to {final_decision.lower()} or buy {asset} over the next {horizon} days",
+        f"- Thesis: {thesis}",
+    ]
+    conclusion = _render_conclusion(final_arbiter, final_decision, asset, horizon)
+    if conclusion:
+        lines.append(f"- Immediate posture: {conclusion}")
     return "\n".join(lines)
 
 
@@ -536,39 +669,67 @@ def _render_investment_thesis(
     return "\n".join(lines)
 
 
-def _render_visible_debate_summary(role_memos: dict[str, dict[str, Any]]) -> str:
+def _render_judges_ruling(
+    *,
+    final_arbiter: dict[str, Any],
+    role_memos: dict[str, dict[str, Any]],
+    asset: str,
+    horizon: Any,
+) -> str:
+    lines = [
+        f"- Ruling: {_render_conclusion(final_arbiter, final_decision_label(final_arbiter), asset, horizon)}",
+        f"- Thesis: {_strip_data_gap_language(_investment_thesis_block(final_arbiter, role_memos))}",
+    ]
+    key_factors = _render_key_factors(final_arbiter)
+    if key_factors != "Unavailable.":
+        lines.append(f"- Key factors: {key_factors}")
+    rejected = final_arbiter.get("rejected_alternative")
+    if isinstance(rejected, dict) and rejected.get("alternative_action") and rejected.get("why_rejected"):
+        lines.append(
+            f"- Rejected alternative: {str(rejected['alternative_action']).upper()} — "
+            f"{_strip_data_gap_language(str(rejected['why_rejected']))}"
+        )
+    hard_rules = _render_flip_rules(final_arbiter)
+    if hard_rules:
+        lines.extend(["- Hard rules:", hard_rules])
+    return "\n".join(lines)
+
+
+def _render_bench_evidence(role_memos: dict[str, dict[str, Any]]) -> str:
     technical = _technical_display(role_memos.get("technical_analyst", {}))
     defi = _defi_display(role_memos.get("defi_fundamentals_analyst", {}))
     derivatives = _derivatives_display(role_memos.get("derivatives_analyst", {}))
     news = _news_display(role_memos.get("news_analyst", {}))
-    bull = _debate_argument_text(role_memos.get("bull_researcher", {}))
-    bear = _debate_argument_text(role_memos.get("bear_researcher", {}))
-    risk = role_memos.get("risk_manager", {})
-    risk_views = risk.get("risk_views") if isinstance(risk, dict) else {}
 
     lines = [
-        "Analyst stack:",
         f"- Technical Analyst: {technical}",
         f"- DeFi Analyst: {defi}",
         f"- Derivatives Analyst: {derivatives}",
         f"- News Analyst: {news}",
-        "",
-        "Bull case:",
-        f"- {bull}",
-        "",
-        "Bear case:",
-        f"- {bear}",
     ]
+    return "\n".join(lines)
 
+
+def _render_sentencing_guardrails(
+    *,
+    final_arbiter: dict[str, Any],
+    role_memos: dict[str, dict[str, Any]],
+) -> str:
+    risk = role_memos.get("risk_manager", {})
+    risk_views = risk.get("risk_views") if isinstance(risk, dict) else {}
+
+    lines = []
     if isinstance(risk_views, dict) and risk_views:
-        lines.extend(["", "Risk roundtable:"])
+        lines.append("- Risk roundtable:")
         if risk_views.get("aggressive"):
             lines.append(f"- {risk_views['aggressive']}")
         if risk_views.get("conservative"):
             lines.append(f"- {risk_views['conservative']}")
         if risk_views.get("neutral"):
             lines.append(f"- {risk_views['neutral']}")
+        lines.append("")
 
+    lines.append(_render_risk_controls(final_arbiter=final_arbiter, role_memos=role_memos))
     return "\n".join(lines)
 
 
@@ -604,6 +765,17 @@ def _render_risk_controls(
     if risk_view:
         lines.extend(["", "Current risk posture:", risk_view])
 
+    return "\n".join(lines)
+
+
+def _render_appeal_conditions(
+    final_arbiter: dict[str, Any],
+    review_payload: dict[str, Any] | None,
+) -> str:
+    lines = [_render_what_would_change(final_arbiter)]
+    review_block = _render_review_plan(final_arbiter, review_payload)
+    if review_block:
+        lines.extend(["", review_block])
     return "\n".join(lines)
 
 
@@ -678,6 +850,17 @@ def _render_score_breakdown(
         for label in ("momentum", "liquidity", "derivatives", "defi", "onchain", "sentiment", "data_quality_penalty"):
             if label in sub_scores:
                 lines.append(f"- {score_labels[label]}: {sub_scores[label]}")
+    data_quality = scorecard.get("data_quality")
+    if isinstance(data_quality, dict):
+        core_complete = data_quality.get("core_complete")
+        supplementary_complete = data_quality.get("supplementary_complete")
+        penalty = data_quality.get("penalty")
+        if core_complete is not None:
+            lines.append(f"- Core data complete: {core_complete}")
+        if supplementary_complete is not None:
+            lines.append(f"- Supplementary data complete: {supplementary_complete}")
+        if penalty is not None and "data_quality_penalty" not in sub_scores:
+            lines.append(f"- Data quality penalty: {penalty}")
     # Flat -5 penalty for any supplementary gaps (capped, not per-source)
     core_gaps, supp_gaps = _classify_gaps(coverage_gaps)
     if core_gaps and "data_quality_penalty" not in sub_scores:
